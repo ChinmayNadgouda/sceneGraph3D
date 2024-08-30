@@ -1,4 +1,9 @@
+This is an extension to the already developed concept graph in this [link](https://github.com/concept-graphs/concept-graphs),
+The code is for the fulfillment of master's thesis at the University of Stuttgart.
+The main intension is to have the concept graph run on SceneFun3D dataset, compare and evaluate different foundation models used and to enhance fine-grained relationship detection.
 
+
+From below, the README is same as it is on the main concept graph page.
 # ConceptGraphs: Open-Vocabulary 3D Scene Graphs for Perception and Planning
 
 This repository contains the code for the ConceptGraphs project. ConceptGraphs builds open-vocabulary 3D scenegraphs that enable a broad range of perception and task planning capabilities.
