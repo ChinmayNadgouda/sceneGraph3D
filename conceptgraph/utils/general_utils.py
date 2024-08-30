@@ -383,18 +383,19 @@ def filter_detections(
 
         if keep:
             filtered_detections.append(current_det)
+    filtered_labels = []
+    if len(filtered_detections) is not 0:
+        # Unzip the filtered results
+        confidences, class_ids, xyxy, masks, indices = zip(*filtered_detections)
+        filtered_labels = [given_labels[i] for i in indices]
 
-    # Unzip the filtered results
-    confidences, class_ids, xyxy, masks, indices = zip(*filtered_detections)
-    filtered_labels = [given_labels[i] for i in indices]
-
-    # Create new detections object
-    filtered_detections = sv.Detections(
-        class_id=np.array(class_ids, dtype=np.int64),
-        confidence=np.array(confidences, dtype=np.float32),
-        xyxy=np.array(xyxy, dtype=np.float32),
-        mask=np.array(masks, dtype=np.bool_)
-    )
+        # Create new detections object
+        filtered_detections = sv.Detections(
+            class_id=np.array(class_ids, dtype=np.int64),
+            confidence=np.array(confidences, dtype=np.float32),
+            xyxy=np.array(xyxy, dtype=np.float32),
+            mask=np.array(masks, dtype=np.bool_)
+        )
 
     return filtered_detections, filtered_labels
 
@@ -463,7 +464,7 @@ def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_la
         captions = get_obj_captions_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
         edge_image = plot_edges_from_vlm(annotated_image_for_vlm, edges, filtered_detections, obj_classes, labels, sorted_indices, save_path=vis_save_path_for_vlm_edges)
     
-    return labels, edges, edge_image, captions
+    return labels, edges, edge_image
     
 def handle_rerun_saving(use_rerun, save_rerun, exp_suffix, exp_out_path):
     # Save the rerun output if needed
@@ -685,7 +686,7 @@ def save_obj_json(exp_suffix, exp_out_path, objects):
         obj_dict = {
             "id": curr_obj['curr_obj_num'],
             "object_tag": curr_obj['class_name'],
-            "object_caption": curr_obj['consolidated_caption'],
+            #"object_caption": curr_obj['consolidated_caption'],
             "bbox_extent": bbox_extent,
             "bbox_center": bbox_center,
             "bbox_volume": bbox_volume  # Add the volume to the dictionary

@@ -19,7 +19,7 @@ I'm just removing the gradslam dependency to make conceptgraphs easier to instal
 Support for Replica (sequences from the iMAP paper), TUM RGB-D, NICE-SLAM Apartment.
 TODO: Add Azure Kinect dataset support
 """
-
+from . import data_parser
 import abc
 import glob
 import json
@@ -306,7 +306,14 @@ class GradSLAMDataset(torch.utils.data.Dataset):
         else:
             raise NotImplementedError
 
-        K = as_intrinsics_matrix([self.fx, self.fy, self.cx, self.cy])
+        if self.fx == -1 :
+            file_name = color_path.split('/')
+            scene = file_name[-1].split('.')
+            scene_id = scene[0] +"."+ scene[1]
+            K = as_intrinsics_matrix(self.get_intrinsics_SF3D(scene_id))
+        else:
+            K = as_intrinsics_matrix([self.fx, self.fy, self.cx, self.cy])
+
         K = torch.from_numpy(K)
         if self.distortion is not None:
             # undistortion is only applied on color image, not depth!
@@ -341,6 +348,17 @@ class GradSLAMDataset(torch.utils.data.Dataset):
             pose.to(self.device).type(self.dtype),
             # self.retained_inds[index].item(),
         )
+
+    def get_intrinsics_SF3D(self, scene_id):
+        """
+        Returns intrinsic params for each timestamp in scene fun 3D dataset
+        Args:
+            scene_id: the timestamp
+
+        Returns:  fx,fy,cx,cy  (intrinsic params)
+
+        """
+        raise NotImplementedError
 
 
 class ICLDataset(GradSLAMDataset):
@@ -948,6 +966,72 @@ class MultiscanDataset(GradSLAMDataset):
         embedding = torch.load(embedding_file_path)
         return embedding.permute(0, 2, 3, 1)  # (1, H, W, embedding_dim)
 
+class SceneFun3D(GradSLAMDataset):
+    def __init__(self,
+        config_dict,
+        basedir,
+        sequence,
+        stride: Optional[int] = None,
+        start: Optional[int] = 0,
+        end: Optional[int] = -1,
+        desired_height: Optional[int] = 480,
+        desired_width: Optional[int] = 640,
+        load_embeddings: Optional[bool] = False,
+        embedding_dir: Optional[str] = "embeddings",
+        embedding_dim: Optional[int] = 512,
+        **kwargs,
+    ):
+        self.basedir = str(basedir)
+        self.sequence = sequence
+        self.input_folder = os.path.join(basedir, sequence)
+        self.pose_path = os.path.join(self.input_folder, "poses")
+        super().__init__(
+        config_dict,
+        stride=stride,
+        start=start,
+        end=end,
+        desired_height=desired_height,
+        desired_width=desired_width,
+        load_embeddings=load_embeddings,
+        embedding_dir=embedding_dir,
+        embedding_dim=embedding_dim,
+        **kwargs,
+        )
+
+    def get_intrinsics_SF3D(self, index):
+        file = open(self.input_folder + "/wide_intrinsics/" + index + ".pincam", 'r')
+        values = file.readline().split()
+
+        return [values[2],values[3],values[4],values[5]]
+
+    def get_filepaths(self):
+        color_paths = natsorted(glob.glob(f"{self.input_folder}/wide/*.png"))
+        depth_paths = natsorted(glob.glob(f"{self.input_folder}/highres_depth/*.png"))
+        embedding_paths = None
+        if self.load_embeddings:
+            embedding_paths = natsorted(
+                glob.glob(f"{self.input_folder}/{self.embedding_dir}/*.pt")
+            )
+        return color_paths, depth_paths, embedding_paths
+
+    def load_poses(self):
+        poses = []
+        data_root_path = os.path.join(*self.basedir.split('/')[0:-2])
+        dataParser = data_parser.DataParser('/'+str(data_root_path),'test')
+        visit_id, video_id = self.input_folder.split('/')[-2:]
+        traj = dataParser.get_camera_trajectory(visit_id, video_id)
+        for path in self.color_paths:
+            folders = path.split('/')
+            time_stamp = folders[-1].split('_')[-1].replace('.png','')
+            pose = dataParser.get_nearest_pose(time_stamp,traj)
+            print(time_stamp)
+            poses.append(torch.from_numpy(np.array(pose)).float())
+
+        return poses
+
+    def read_embedding_from_file(self, embedding_file_path):
+        embedding = torch.load(embedding_file_path)
+        return embedding.permute(0, 2, 3, 1)  # (1, H, W, embedding_dim)
 
 class Hm3dDataset(GradSLAMDataset):
     def __init__(
@@ -1120,6 +1204,8 @@ def get_dataset(dataconfig, basedir, sequence, **kwargs):
         return MultiscanDataset(config_dict, basedir, sequence, **kwargs)
     elif config_dict['dataset_name'].lower() in ['hm3d']:
         return Hm3dDataset(config_dict, basedir, sequence, **kwargs)
+    elif config_dict['dataset_name'].lower() in ["scenefun3d"]:
+        return SceneFun3D(config_dict, basedir, sequence, **kwargs)
     else:
         raise ValueError(f"Unknown dataset name {config_dict['dataset_name']}")
 

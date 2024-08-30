@@ -121,13 +121,14 @@ def main(cfg : DictConfig):
     cfg = process_cfg(cfg)
 
     # Initialize the dataset
+    scene_iddd = str(cfg.scene_id)
     dataset = get_dataset(
         dataconfig=cfg.dataset_config,
         start=cfg.start,
         end=cfg.end,
         stride=cfg.stride,
         basedir=cfg.dataset_root,
-        sequence=cfg.scene_id,
+        sequence=scene_iddd,
         desired_height=cfg.image_height,
         desired_width=cfg.image_width,
         device="cpu",
@@ -148,10 +149,10 @@ def main(cfg : DictConfig):
         )
         frames = []
     # output folder for this mapping experiment
-    exp_out_path = get_exp_out_path(cfg.dataset_root, cfg.scene_id, cfg.exp_suffix)
+    exp_out_path = get_exp_out_path(cfg.dataset_root, scene_iddd, cfg.exp_suffix)
 
     # output folder of the detections experiment to use
-    det_exp_path = get_exp_out_path(cfg.dataset_root, cfg.scene_id, cfg.detections_exp_suffix, make_dir=False)
+    det_exp_path = get_exp_out_path(cfg.dataset_root, scene_iddd, cfg.detections_exp_suffix, make_dir=False)
 
     # we need to make sure to use the same classes as the ones used in the detections
     detections_exp_cfg = cfg_to_dict(cfg)
@@ -174,7 +175,8 @@ def main(cfg : DictConfig):
 
         ## Initialize the detection models
         detection_model = measure_time(YOLO)('yolov8l-world.pt')
-        sam_predictor = SAM('sam_l.pt') # SAM('mobile_sam.pt') # UltraLytics SAM
+        #sam_predictor = SAM('sam_l.pt') 
+        sam_predictor = SAM('mobile_sam.pt') # UltraLytics SAM
         # sam_predictor = measure_time(get_sam_predictor)(cfg) # Normal SAM
         clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
             "ViT-H-14", "laion2b_s32b_b79k"
@@ -185,7 +187,7 @@ def main(cfg : DictConfig):
         # Set the classes for the detection model
         detection_model.set_classes(obj_classes.get_classes_arr())
 
-        openai_client = get_openai_client()
+        # openai_client = get_openai_client()
         
     else:
         print("\n".join(["NOT Running detections..."] * 10))
@@ -269,7 +271,7 @@ def main(cfg : DictConfig):
             )
             
             # Make the edges
-            labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, cfg.make_edges, openai_client)
+            labels, edges, edge_image = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, False, None)
 
             image_crops, image_feats, text_feats = compute_clip_features_batched(
                 image_rgb, curr_det, clip_model, clip_preprocess, clip_tokenizer, obj_classes.get_classes_arr(), cfg.device)
@@ -292,7 +294,6 @@ def main(cfg : DictConfig):
                 "detection_class_labels": detection_class_labels,
                 "labels": labels,
                 "edges": edges,
-                "captions": captions,
             }
 
             raw_gobs = results
@@ -585,10 +586,10 @@ def main(cfg : DictConfig):
     # LOOP OVER -----------------------------------------------------
     
     # Consolidate captions 
-    for object in objects:
-        obj_captions = object['captions'][:20]
-        consolidated_caption = consolidate_captions(openai_client, obj_captions)
-        object['consolidated_caption'] = consolidated_caption
+    #for object in objects:
+        #obj_captions = object['captions'][:20]
+        #consolidated_caption = consolidate_captions(openai_client, obj_captions)
+        #object['consolidated_caption'] = consolidated_caption
 
     handle_rerun_saving(cfg.use_rerun, cfg.save_rerun, cfg.exp_suffix, exp_out_path)
 

@@ -22,7 +22,7 @@ from pathlib import Path
 
 @dataclass
 class ProgramArgs:
-    datapath = "/home/kuwajerw/new_local_data/new_record3d/ali_apartment/co_store"
+    datapath = "/home/gokul/Downloads/convenience_store_record3d_dataset"
     output_dir = None  # Optional, set dynamically if not provided
 
 desired_width = 1440

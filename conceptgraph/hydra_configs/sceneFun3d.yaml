@@ -1,0 +1,7 @@
+defaults:
+  - base_paths
+
+dataset_root: /media/gokul/NewVolume/cvpr24-challenge/challenge_track_2/test/470811
+scene_id: 47331988
+dataset_config: ${repo_root}/conceptgraph/dataset/dataconfigs/sceneFun3D/sceneFun3D.yaml
+render_camera_path: ${repo_root}/conceptgraph/dataset/dataconfigs/record3d/record_3d_camera.json
