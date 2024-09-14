@@ -11,7 +11,8 @@ from conceptgraph.slam.utils import prepare_objects_save_vis
 from conceptgraph.utils.ious import mask_subtract_contained
 import supervision as sv
 import scipy.ndimage as ndi 
-from conceptgraph.utils.vlm import get_obj_captions_from_image_gpt4v, get_obj_rel_from_image_gpt4v, vlm_extract_object_captions
+from conceptgraph.utils.vlm import get_obj_captions_from_image_gpt4v, get_obj_rel_from_image_gpt4v, \
+    vlm_extract_object_captions, get_obj_rel_from_image_llava, get_obj_captions_from_image_llava
 import cv2
 import re
 
@@ -460,11 +461,11 @@ def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_la
         cv2.imwrite(str(vis_save_path_for_vlm), annotated_image_for_vlm)
         print(f"Line 313, vis_save_path_for_vlm: {vis_save_path_for_vlm}")
         
-        edges = get_obj_rel_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
-        captions = get_obj_captions_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
+        edges = get_obj_rel_from_image_llava(openai_client, vis_save_path_for_vlm, label_list)
+        captions = get_obj_captions_from_image_llava(openai_client, vis_save_path_for_vlm, label_list)
         edge_image = plot_edges_from_vlm(annotated_image_for_vlm, edges, filtered_detections, obj_classes, labels, sorted_indices, save_path=vis_save_path_for_vlm_edges)
     
-    return labels, edges, edge_image
+    return labels, edges, edge_image, captions
     
 def handle_rerun_saving(use_rerun, save_rerun, exp_suffix, exp_out_path):
     # Save the rerun output if needed
@@ -686,7 +687,7 @@ def save_obj_json(exp_suffix, exp_out_path, objects):
         obj_dict = {
             "id": curr_obj['curr_obj_num'],
             "object_tag": curr_obj['class_name'],
-            #"object_caption": curr_obj['consolidated_caption'],
+            "object_caption": curr_obj['consolidated_caption'],
             "bbox_extent": bbox_extent,
             "bbox_center": bbox_center,
             "bbox_volume": bbox_volume  # Add the volume to the dictionary

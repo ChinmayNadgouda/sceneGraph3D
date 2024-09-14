@@ -999,14 +999,28 @@ class SceneFun3D(GradSLAMDataset):
         )
 
     def get_intrinsics_SF3D(self, index):
+        #file = open(self.input_folder + "/lowres_wide_intrinsics/" + index + ".pincam", 'r')
         file = open(self.input_folder + "/wide_intrinsics/" + index + ".pincam", 'r')
+
         values = file.readline().split()
 
         return [values[2],values[3],values[4],values[5]]
 
     def get_filepaths(self):
+        color_paths = natsorted(glob.glob(f"{self.input_folder}/lowres_wide/*.png"))
+        depth_paths = natsorted(glob.glob(f"{self.input_folder}/highres_depth/*.png"))
+
+        if os.path.exists(os.path.join(f"{self.input_folder}/confidence")):
+            depth_folder = "lowres_depth"
+        else:
+            depth_folder = "lowres_depth"
+        depth_paths = natsorted(
+            glob.glob(os.path.join(f"{self.input_folder}/{depth_folder}/*.png"))
+        )
+
         color_paths = natsorted(glob.glob(f"{self.input_folder}/wide/*.png"))
         depth_paths = natsorted(glob.glob(f"{self.input_folder}/highres_depth/*.png"))
+
         embedding_paths = None
         if self.load_embeddings:
             embedding_paths = natsorted(
@@ -1017,7 +1031,7 @@ class SceneFun3D(GradSLAMDataset):
     def load_poses(self):
         poses = []
         data_root_path = os.path.join(*self.basedir.split('/')[0:-2])
-        dataParser = data_parser.DataParser('/'+str(data_root_path),'test')
+        dataParser = data_parser.DataParser('/'+str(data_root_path),'dev')
         visit_id, video_id = self.input_folder.split('/')[-2:]
         traj = dataParser.get_camera_trajectory(visit_id, video_id)
         for path in self.color_paths:

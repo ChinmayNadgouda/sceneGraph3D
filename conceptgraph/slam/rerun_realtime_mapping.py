@@ -11,6 +11,7 @@ import pickle
 import gzip
 
 # Third-party imports
+from transformers import AutoProcessor, LlavaForConditionalGeneration
 import cv2
 import numpy as np
 import scipy.ndimage as ndi
@@ -39,7 +40,8 @@ from conceptgraph.utils.optional_rerun_wrapper import (
 from conceptgraph.utils.optional_wandb_wrapper import OptionalWandB
 from conceptgraph.utils.geometry import rotation_matrix_to_quaternion
 from conceptgraph.utils.logging_metrics import DenoisingTracker, MappingTracker
-from conceptgraph.utils.vlm import consolidate_captions, get_obj_rel_from_image_gpt4v, get_openai_client
+from conceptgraph.utils.vlm import consolidate_captions, get_obj_rel_from_image_gpt4v, get_openai_client, \
+    consolidate_captions_llava
 from conceptgraph.utils.ious import mask_subtract_contained
 from conceptgraph.utils.general_utils import (
     ObjectClasses, 
@@ -110,6 +112,7 @@ def main(cfg : DictConfig):
     orr = OptionalReRun()
     orr.set_use_rerun(cfg.use_rerun)
     orr.init("realtime_mapping")
+    orr.connect('141.58.225.158:9876')
     orr.spawn()
 
     owandb = OptionalWandB()
@@ -179,15 +182,27 @@ def main(cfg : DictConfig):
         sam_predictor = SAM('mobile_sam.pt') # UltraLytics SAM
         # sam_predictor = measure_time(get_sam_predictor)(cfg) # Normal SAM
         clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
-            "ViT-H-14", "laion2b_s32b_b79k"
+            "ViT-B-32", "laion400m_e31"
         )
+        # clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
+        #     "ViT-H-14", "laion2b_s32b_b79k"
+        # )
+        #clip_tokenizer = open_clip.get_tokenizer("ViT-H-14")
         clip_model = clip_model.to(cfg.device)
-        clip_tokenizer = open_clip.get_tokenizer("ViT-H-14")
+        clip_tokenizer = open_clip.get_tokenizer("ViT-B-32")
 
         # Set the classes for the detection model
         detection_model.set_classes(obj_classes.get_classes_arr())
 
         # openai_client = get_openai_client()
+        model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
+        processor = AutoProcessor.from_pretrained(model_id)
+        model = LlavaForConditionalGeneration.from_pretrained(
+            model_id,
+            torch_dtype=torch.float16,
+            low_cpu_mem_usage=True,
+            load_in_4bit=True
+        )
         
     else:
         print("\n".join(["NOT Running detections..."] * 10))
@@ -271,7 +286,7 @@ def main(cfg : DictConfig):
             )
             
             # Make the edges
-            labels, edges, edge_image = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, False, None)
+            labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, cfg.make_edges, (model,processor))
 
             image_crops, image_feats, text_feats = compute_clip_features_batched(
                 image_rgb, curr_det, clip_model, clip_preprocess, clip_tokenizer, obj_classes.get_classes_arr(), cfg.device)
@@ -294,6 +309,7 @@ def main(cfg : DictConfig):
                 "detection_class_labels": detection_class_labels,
                 "labels": labels,
                 "edges": edges,
+                "captions": captions,
             }
 
             raw_gobs = results
@@ -585,11 +601,11 @@ def main(cfg : DictConfig):
                 })
     # LOOP OVER -----------------------------------------------------
     
-    # Consolidate captions 
-    #for object in objects:
-        #obj_captions = object['captions'][:20]
-        #consolidated_caption = consolidate_captions(openai_client, obj_captions)
-        #object['consolidated_caption'] = consolidated_caption
+    #Consolidate captions
+    for object in objects:
+        obj_captions = object['captions'][:20]
+        consolidated_caption = consolidate_captions_llava((model,processor), obj_captions)
+        object['consolidated_caption'] = consolidated_caption
 
     handle_rerun_saving(cfg.use_rerun, cfg.save_rerun, cfg.exp_suffix, exp_out_path)
 
