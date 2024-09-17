@@ -113,7 +113,9 @@ def main(cfg : DictConfig):
     orr.set_use_rerun(cfg.use_rerun)
     orr.init("realtime_mapping")
     orr.connect('141.58.225.158:9876')
-    orr.spawn()
+
+    #orr.spawn()
+
 
     owandb = OptionalWandB()
     owandb.set_use_wandb(cfg.use_wandb)

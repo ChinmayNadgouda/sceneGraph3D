@@ -9,7 +9,7 @@ import numpy as np
 import ast
 import re
 
-from transformers import PreTrainedModel, AutoProcessor
+from transformers import PreTrainedModel, AutoProcessor, LlavaNextProcessor
 
 system_prompt_1 = '''
 You are an agent specialized in describing the spatial relationships between objects in an annotated image.
@@ -447,3 +447,101 @@ def extract_model_output(full_response: str, prompt: str):
         # Extract the part of the response that comes after the prompt
         return full_response[len(prompt):].strip()
     return full_response.strip()
+
+
+def consolidate_captions_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextProcessor), captions: list):
+    # Formatting the captions into a single string prompt
+    captions_text = "\n".join([f"{cap['caption']}" for cap in captions if cap['caption'] is not None])
+    user_prompt = f"Here are several captions for the same object:\n{captions_text}\n\nPlease consolidate these into a single, clear caption that accurately describes the object."
+    global system_prompt_consolidate_captions
+    consolidated_caption = ""
+    try:
+        model = client[0]
+        processor = client[1]
+        prompt = f"{system_prompt_consolidate_captions} USER: \n{user_prompt} ASSISTANT: "
+        inputs = processor(prompt, return_tensors='pt')
+        output = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
+        consolidated_caption_json = processor.decode(output[0][2:], skip_special_tokens=True)
+        consolidated_caption = json.loads(consolidated_caption_json).get("consolidated_caption", "")
+        print(f"Consolidated Caption: {consolidated_caption}")
+
+
+        conversation = [
+            {
+
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "What is shown in this image?"},
+                {"type": "image"},
+                ],
+            },
+        ]
+        prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
+
+        inputs = processor(images=image, text=prompt, return_tensors="pt").to("cuda:0")
+
+        # autoregressively complete prompt
+        output = model.generate(**inputs, max_new_tokens=100)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        consolidated_caption = ""
+
+    return consolidated_caption
+
+def get_obj_rel_from_image_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextProcessor), image_path: str, labels: list):
+    # Getting the base64 string
+    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships between the objects in the image in the format: " + '''[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].'''
+    raw_image = Image.open(image_path).convert('RGB')
+    global system_prompt
+    try:
+        model = client[0]
+        processor = client[1]
+        prompt = f"{system_prompt} USER: <image>\n{user_prompt} ASSISTANT: "
+        inputs = processor(prompt, raw_image, return_tensors='pt')
+        output = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
+        vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
+        print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
+        prompt2 = f"{system_prompt}USER:\n{user_prompt}ASSISTANT: "
+        text_to_extract = extract_model_output(vlm_answer_str, prompt2)
+        print(text_to_extract)
+        vlm_answer = extract_list_of_tuples(text_to_extract)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        print(f"Setting vlm_answer to an empty list.")
+        vlm_answer = []
+    print(f"Line 68, user_query: {user_prompt}")
+    print(f"Line 97, vlm_answer: {vlm_answer}")
+
+    return vlm_answer
+
+
+def get_obj_captions_from_image_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextProcessor), image_path: str, label_list: list):
+    # Getting the base64 string
+    base64_image = encode_image_for_openai(image_path)
+    raw_image = Image.open(image_path).convert('RGB')
+
+    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {label_list}. Please accurately caption the objects in the image."
+    global system_prompt_captions
+
+    vlm_answer_captions = []
+    try:
+        model = client[0]
+        processor = client[1]
+        prompt = f"{system_prompt_captions} USER: <image>\n{user_prompt} ASSISTANT: "
+        inputs = processor(prompt, raw_image, return_tensors='pt')
+        output = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
+        vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
+        print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
+        prompt2 = f"{system_prompt_captions}USER:\n{user_prompt}ASSISTANT: "
+        text_to_extract = extract_model_output(vlm_answer_str,prompt2)
+        print(text_to_extract)
+        vlm_answer_captions = vlm_extract_object_captions(text_to_extract)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        print(f"Setting vlm_answer to an empty list.")
+        vlm_answer_captions = []
+    print(f"Line 68, user_query: {user_prompt}")
+    print(f"Line 97, vlm_answer: {vlm_answer_captions}")
+
+    return vlm_answer_captions
+

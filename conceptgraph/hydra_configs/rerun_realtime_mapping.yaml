@@ -1,9 +1,9 @@
 defaults:
   - base
   - base_mapping
-  #- replica
+  - replica
   #- record3d
-  - sceneFun3d
+  #- sceneFun3d
   - sam
   - classes
   - logging_level
