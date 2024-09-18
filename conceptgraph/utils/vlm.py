@@ -458,30 +458,26 @@ def consolidate_captions_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextPr
     try:
         model = client[0]
         processor = client[1]
-        prompt = f"{system_prompt_consolidate_captions} USER: \n{user_prompt} ASSISTANT: "
-        inputs = processor(prompt, return_tensors='pt')
-        output = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
-        consolidated_caption_json = processor.decode(output[0][2:], skip_special_tokens=True)
-        consolidated_caption = json.loads(consolidated_caption_json).get("consolidated_caption", "")
-        print(f"Consolidated Caption: {consolidated_caption}")
-
-
         conversation = [
             {
 
             "role": "user",
             "content": [
-                {"type": "text", "text": "What is shown in this image?"},
+                {"type": "text", "text": f"{system_prompt_consolidate_captions} USER: \n{user_prompt} ASSISTANT: "},
                 {"type": "image"},
                 ],
             },
         ]
         prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
 
-        inputs = processor(images=image, text=prompt, return_tensors="pt").to("cuda:0")
+        inputs = processor(text=prompt, return_tensors="pt")
 
         # autoregressively complete prompt
-        output = model.generate(**inputs, max_new_tokens=100)
+        output = model.generate(**inputs, max_new_tokens=4000)
+        consolidated_caption_json = processor.decode(output[0][2:], skip_special_tokens=True)
+        consolidated_caption = json.loads(consolidated_caption_json).get("consolidated_caption", "")
+        print(f"Consolidated Caption: {consolidated_caption}")
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         consolidated_caption = ""
@@ -490,21 +486,35 @@ def consolidate_captions_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextPr
 
 def get_obj_rel_from_image_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextProcessor), image_path: str, labels: list):
     # Getting the base64 string
-    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships between the objects in the image in the format: " + '''[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].'''
+    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships between the objects in the image in the format: " + '''[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].  The top image is colored and has annotations and the bottom image is depth of the top.'''
     raw_image = Image.open(image_path).convert('RGB')
     global system_prompt
     try:
         model = client[0]
         processor = client[1]
-        prompt = f"{system_prompt} USER: <image>\n{user_prompt} ASSISTANT: "
-        inputs = processor(prompt, raw_image, return_tensors='pt')
-        output = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
+        conversation = [
+            {
+
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": f"{system_prompt} USER: <image>\n{user_prompt} ASSISTANT: "},
+                    {"type": "image"},
+                ],
+            },
+        ]
+        prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
+
+        inputs = processor(image=raw_image, text=prompt, return_tensors="pt")
+
+        # autoregressively complete prompt
+        output = model.generate(**inputs, max_new_tokens=4000, do_sample=False)
         vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
         print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
         prompt2 = f"{system_prompt}USER:\n{user_prompt}ASSISTANT: "
         text_to_extract = extract_model_output(vlm_answer_str, prompt2)
         print(text_to_extract)
         vlm_answer = extract_list_of_tuples(text_to_extract)
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         print(f"Setting vlm_answer to an empty list.")
@@ -527,15 +537,29 @@ def get_obj_captions_from_image_llava_1_6_mistral(client: (PreTrainedModel, Llav
     try:
         model = client[0]
         processor = client[1]
-        prompt = f"{system_prompt_captions} USER: <image>\n{user_prompt} ASSISTANT: "
-        inputs = processor(prompt, raw_image, return_tensors='pt')
-        output = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
+        conversation = [
+            {
+
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": f"{system_prompt_captions} USER: <image>\n{user_prompt} ASSISTANT: "},
+                    {"type": "image"},
+                ],
+            },
+        ]
+        prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
+
+        inputs = processor(image=raw_image, text=prompt, return_tensors="pt")
+
+        # autoregressively complete prompt
+        output = model.generate(**inputs, max_new_tokens=4000, do_sample=False)
         vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
         print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
         prompt2 = f"{system_prompt_captions}USER:\n{user_prompt}ASSISTANT: "
         text_to_extract = extract_model_output(vlm_answer_str,prompt2)
         print(text_to_extract)
         vlm_answer_captions = vlm_extract_object_captions(text_to_extract)
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         print(f"Setting vlm_answer to an empty list.")
