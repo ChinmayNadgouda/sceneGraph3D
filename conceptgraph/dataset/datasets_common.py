@@ -460,7 +460,7 @@ class ReplicaDataset(GradSLAMDataset):
         **kwargs,
     ):
         self.input_folder = os.path.join(basedir, sequence)
-        self.pose_path = os.path.join(self.input_folder, "traj.txt")
+        self.pose_path = os.path.join(self.input_folder, "output__.json")
         super().__init__(
             config_dict,
             stride=stride,
@@ -483,7 +483,7 @@ class ReplicaDataset(GradSLAMDataset):
                 glob.glob(f"{self.input_folder}/{self.embedding_dir}/*.pt")
             )
         return color_paths, depth_paths, embedding_paths
-
+    """ 
     def load_poses(self):
         poses = []
         with open(self.pose_path, "r") as f:
@@ -491,12 +491,104 @@ class ReplicaDataset(GradSLAMDataset):
         for i in range(self.num_imgs):
             line = lines[i]
             c2w = np.array(list(map(float, line.split()))).reshape(4, 4)
-            # c2w[:3, 1] *= -1
-            # c2w[:3, 2] *= -1
+            #c2w[:3, 1] *= -1
+            #c2w[:3, 2] *= -1
             c2w = torch.from_numpy(c2w).float()
             poses.append(c2w)
         return poses
+    """
+    def load_poses(self):
+        poses = []
+        P = torch.tensor(
+            [
+                [-1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
+            ]
+        ).float()
 
+        Q = torch.tensor(
+             [
+                [-1, 0, 0, 0],
+                [0, -1, 0, 0],
+                [0, 0, -1, 0],
+                [0, 0, 0, 1]
+            ]
+        ).float()
+        T_flip = np.array([
+            [-1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ])
+
+        # Transform the pose by flipping the axes
+        
+
+        # Step 2: Invert the pose matrix to get camera-to-world
+
+        img_to_del = []
+        if self.pose_path.endswith(".log"):
+                # print("Loading poses from .log format")
+                poses_1 = []
+                lines = None
+                with open(self.pose_path, "r") as f:
+                    lines = f.readlines()
+                
+                if len(lines) % 5 != 0:
+                    raise ValueError(
+                        "Incorrect file format for .log odom file "
+                        "Number of non-empty lines must be a multiple of 5"
+                    )
+                num_lines = len(lines) // 5
+                for i in range(0, num_lines):
+                    _curpose = []
+                    _curpose.append(list(map(float, lines[5 * i + 1].split())))
+                    _curpose.append(list(map(float, lines[5 * i + 2].split())))
+                    _curpose.append(list(map(float, lines[5 * i + 3].split())))
+                    _curpose.append(list(map(float, lines[5 * i + 4].split())))
+                    _curpose = np.array(_curpose).reshape(4, 4)
+                    print(_curpose)    
+                    poses.append(torch.from_numpy(_curpose))
+        else:
+            with open(self.pose_path, "r") as f:
+                dict_poses = json.load(f)
+            for i in range(self.num_imgs):
+                id = self.color_paths[i].split('/')[-1].split('.')[0]
+                print(id)
+                
+                if id in dict_poses.keys():
+                    posee = np.array(dict_poses[id])
+                    #c2w = np.dot(T_flip, w2c)
+                    #c2w = np.linalg.inv(T_flipped)
+                    
+                    #posee2 = torch.tensor(pose)
+                    #posee = Q @ posee2 @ Q.T
+                    _R = posee[:3, :3]
+                    _t = posee[:3, 3]
+                    posee[:3,:3] = _R.T
+                    posee[:3,3] = -_R.T @ _t
+                    #posee = Q @ c2w @ Q.T
+                    #print(posee*1000)
+                    #c2w[:3, 3] *= -1
+                    #c2w[:3, 1] *= -1
+                    posee[:3, 2] *= -1
+                    #c2w[1, :3] *= -1
+                    #c2w[2, :3] *= -1
+                    #c2w[3, :3] *= -1
+                    poses.append(torch.tensor(posee*0.01))
+                else:
+                    img_to_del.append(i)
+                #poses.append(world_to_camera_pose)
+            print(img_to_del)
+            for img in sorted(img_to_del, reverse=True):
+                self.color_paths.pop(img)
+                self.depth_paths.pop(img)
+                self.num_imgs -= 1
+        print(len(poses))    
+        return poses
+    
     def read_embedding_from_file(self, embedding_file_path):
         embedding = torch.load(embedding_file_path)
         return embedding.permute(0, 2, 3, 1)  # (1, H, W, embedding_dim)

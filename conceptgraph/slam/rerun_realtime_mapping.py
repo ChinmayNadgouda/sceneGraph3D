@@ -112,9 +112,9 @@ def main(cfg : DictConfig):
     orr = OptionalReRun()
     orr.set_use_rerun(cfg.use_rerun)
     orr.init("realtime_mapping")
-    orr.connect('141.58.225.158:9876')
+    #orr.connect('141.58.225.158:9876')
 
-    #orr.spawn()
+    orr.spawn()
 
 
     owandb = OptionalWandB()
@@ -197,14 +197,16 @@ def main(cfg : DictConfig):
         detection_model.set_classes(obj_classes.get_classes_arr())
 
         # openai_client = get_openai_client()
-        model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
-        processor = AutoProcessor.from_pretrained(model_id)
-        model = LlavaForConditionalGeneration.from_pretrained(
-            model_id,
-            torch_dtype=torch.float16,
-            low_cpu_mem_usage=True,
-            load_in_4bit=True,
-            use_flash_attention_2=True        )
+        # model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
+        # processor = AutoProcessor.from_pretrained(model_id)
+        # model = LlavaForConditionalGeneration.from_pretrained(
+        #     model_id,
+        #     torch_dtype=torch.float16,
+        #     low_cpu_mem_usage=True,
+        #     load_in_4bit=True,
+        #     use_flash_attention_2=True        )
+        processor = None
+        model = None
         
     else:
         print("\n".join(["NOT Running detections..."] * 10))
@@ -604,10 +606,10 @@ def main(cfg : DictConfig):
     # LOOP OVER -----------------------------------------------------
     
     #Consolidate captions
-    for object in objects:
-        obj_captions = object['captions'][:20]
-        consolidated_caption = consolidate_captions_llava((model,processor), obj_captions)
-        object['consolidated_caption'] = consolidated_caption
+    # for object in objects:
+    #     obj_captions = object['captions'][:20]
+    #     consolidated_caption = consolidate_captions_llava((model,processor), obj_captions)
+    #     object['consolidated_caption'] = consolidated_caption
 
     handle_rerun_saving(cfg.use_rerun, cfg.save_rerun, cfg.exp_suffix, exp_out_path)
 
