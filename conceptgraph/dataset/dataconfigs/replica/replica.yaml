@@ -25,9 +25,9 @@ mapping:
 camera_params:
   image_height: 680
   image_width: 1200
-  fx: 600.0
-  fy: 600.0
-  cx: 599.5
-  cy: 339.5
-  png_depth_scale: 6553.5 #for depth image in png format
+  fx: 598.18728155672204
+  fy: 609.61328193247505
+  cx: 600
+  cy: 340
+  png_depth_scale: 1700 #for depth image in png format
   crop_edge: 0

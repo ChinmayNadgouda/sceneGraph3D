@@ -793,7 +793,7 @@ def merge_objects(
     if do_edges:
         return objects, map_edges
     else:
-        return objects
+        return objects, map_edges
     
 def filter_captions(captions, detection_class_labels):
     # Create a dictionary to map id to the index in the captions list
