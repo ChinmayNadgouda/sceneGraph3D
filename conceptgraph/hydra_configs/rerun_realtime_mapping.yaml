@@ -1,7 +1,8 @@
 defaults:
   - base
   - base_mapping
-  - replica
+  - sirdataset
+  #- replica
   #- record3d
   #- sceneFun3d
   - sam
