@@ -11,7 +11,7 @@ import pickle
 import gzip
 
 # Third-party imports
-from transformers import AutoProcessor, LlavaForConditionalGeneration
+from transformers import AutoProcessor, LlavaForConditionalGeneration, LlavaNextProcessor, LlavaNextForConditionalGeneration, BitsAndBytesConfig
 import cv2
 import numpy as np
 import scipy.ndimage as ndi
@@ -41,7 +41,7 @@ from conceptgraph.utils.optional_wandb_wrapper import OptionalWandB
 from conceptgraph.utils.geometry import rotation_matrix_to_quaternion
 from conceptgraph.utils.logging_metrics import DenoisingTracker, MappingTracker
 from conceptgraph.utils.vlm import consolidate_captions, get_obj_rel_from_image_gpt4v, get_openai_client, \
-    consolidate_captions_llava
+    consolidate_captions_llava, consolidate_captions_llava_1_6_mistral
 from conceptgraph.utils.ious import mask_subtract_contained
 from conceptgraph.utils.general_utils import (
     ObjectClasses, 
@@ -112,9 +112,9 @@ def main(cfg : DictConfig):
     orr = OptionalReRun()
     orr.set_use_rerun(cfg.use_rerun)
     orr.init("realtime_mapping")
-    #orr.connect('141.58.225.158:9876')
+    orr.connect('141.58.225.84:9876')
 
-    orr.spawn()
+    #orr.spawn()
 
 
     owandb = OptionalWandB()
@@ -197,14 +197,19 @@ def main(cfg : DictConfig):
         detection_model.set_classes(obj_classes.get_classes_arr())
 
         # openai_client = get_openai_client()
-        # model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
-        # processor = AutoProcessor.from_pretrained(model_id)
-        # model = LlavaForConditionalGeneration.from_pretrained(
-        #     model_id,
-        #     torch_dtype=torch.float16,
-        #     low_cpu_mem_usage=True,
-        #     load_in_4bit=True,
-        #     use_flash_attention_2=True        )
+        model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
+        model_id = "llava-hf/llava-1.5-7b-hf"
+        model_id = "llava-hf/llava-v1.6-mistral-7b-hf"
+        model_id = "llava-hf/llava-v1.6-vicuna-13b-hf"
+        processor = LlavaNextProcessor.from_pretrained(model_id)
+        bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.bfloat16
+                    )
+        model = LlavaNextForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16, low_cpu_mem_usage=True, quantization_config=bnb_config,
+                    use_flash_attention_2=True ) 
         processor = None
         model = None
         
@@ -237,6 +242,7 @@ def main(cfg : DictConfig):
         # Read info about current frame from dataset
         # color image
         color_path = Path(dataset.color_paths[frame_idx])
+        depth_path = Path(dataset.depth_paths[frame_idx])
         image_original_pil = Image.open(color_path)
         # color and depth tensors, and camera instrinsics matrix
         color_tensor, depth_tensor, intrinsics, *_ = dataset[frame_idx]
@@ -290,7 +296,7 @@ def main(cfg : DictConfig):
             )
             
             # Make the edges
-            labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, cfg.make_edges, (model,processor))
+            labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, cfg.make_edges, (model,processor), depth_path)
 
             image_crops, image_feats, text_feats = compute_clip_features_batched(
                 image_rgb, curr_det, clip_model, clip_preprocess, clip_tokenizer, obj_classes.get_classes_arr(), cfg.device)
@@ -608,7 +614,7 @@ def main(cfg : DictConfig):
     #Consolidate captions
     # for object in objects:
     #     obj_captions = object['captions'][:20]
-    #     consolidated_caption = consolidate_captions_llava((model,processor), obj_captions)
+    #     consolidated_caption = consolidate_captions_llava_1_6_mistral((model,processor), obj_captions)
     #     object['consolidated_caption'] = consolidated_caption
 
     handle_rerun_saving(cfg.use_rerun, cfg.save_rerun, cfg.exp_suffix, exp_out_path)

@@ -33,6 +33,7 @@ def vlm_extract_object_captions(text: str):
         try:
             # Try to convert the entire string to a list of dictionaries
             result = ast.literal_eval(list_str)
+            #result = ast.literal_eval('['+list_str+']')
             print(12313,result)
             if isinstance(result, list):
                 return result
@@ -56,6 +57,7 @@ def vlm_extract_object_captions(text: str):
 
 
 
+#vlm_answer_captions = vlm_extract_object_captions('''[{'id': '0', 'name': 'sofa chair', 'caption': 'A large, comfortable sofa chair.'}, {'id': '1', 'name': 'stool', 'caption': 'A small, round stool.'}, {'id': '2', 'name': 'pillow', 'caption': 'A decorative pillow on the sofa chair.'}, {'id': '3', 'name': 'coffee kettle', 'caption': 'A tall, metallic coffee kettle.'}, {'id': '5', 'name': 'stool', 'caption': 'A small, round stool.'}, {'id': '6', 'name': 'potted plant', 'caption': 'A small potted plant on the floor.'}, {'id': '7', 'name': 'lamp', 'caption': 'A tall, slender lamp with a white shade.'}, {'id': '8', 'name': 'closet door', 'caption': 'A tall, narrow closet door.'}, {'id': '9', 'name': 'window', 'caption': 'A large, rectangular window.'}, {'id': '10', 'name': 'tissue box', 'caption': 'A small, rectangular tissue box.'}, {'id': '11', 'name': 'power outlet', 'caption': 'A small, rectangular power outlet on the wall.'}, {'id': '12', 'name': 'end table', 'caption': 'A small, square end table.'}, {'id': '13', 'name': 'coffee table', 'caption': 'A small, square coffee table.'}, {'id': '14', 'name': 'light switch', 'caption': 'A small, rectangular light switch on the wall.'}, {'id': '16', 'name': 'plate', 'caption': 'A small, round plate on the table.'}, {'id': '18', 'name': 'shelf', 'caption': 'A small, rectangular shelf on the wall.'}, {'id': '24', 'name': 'closet door', 'caption': 'A tall, narrow closet door.'}, {'id': '28', 'name': 'poster', 'caption': 'A large, rectangular poster on the wall.'}]''')
 # model_id = "/home/student/ConceptGraph/llava_model/hub/models--llava-hf--llava-v1.6-mistral-7b-hf/snapshots/216670a16460adb7c41ce3e123ceb3859f73ab12"
 # #model_id = 'llava-hf/llava-v1.6-mistral-7b-hf'
 model_id = "llava-hf/llava-1.5-7b-hf"

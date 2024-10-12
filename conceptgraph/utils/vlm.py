@@ -2,10 +2,10 @@ import json
 from openai import OpenAI
 import os
 import base64
-
+import torch
 from PIL import Image
 import numpy as np
-
+import cv2
 import ast
 import re
 
@@ -99,6 +99,26 @@ Your response should be a JSON object with the format:
 Do not include any additional information in your response.
 '''
 
+system_prompt_llava16 = '''
+You are an agent specialized in describing the spatial relationships between objects in an annotated image.
+
+You will be provided with an annotated image and a list of labels for the annotations. Your task is to determine the spatial relationships between the annotated objects in the image, and return a list of these relationships in the correct list of tuples format as follows:
+[("object1", "spatial relationship", "object2"), ("object3", "spatial relationship", "object4"), ...]
+To consider the objects of interest, they must have a annotatted border with color. While forming the spatial realtionships just consider the object within this colored annotated border and ignore the text.
+Do not consider spatial realtionships between objects which are too far away.
+Your options for the spatial relationship are "above", "under" and "next to". 
+
+For example, you may get an annotated image and a list such as 
+["3: cup", "4: book", "5: clock", "7: candle", "6: music stand", "8: lamp"]
+
+Your response should be a description of the spatial relationships between the objects in the image. 
+An example to illustrate the response format (but don't include them in your answer):
+[("4", "above", "6"), ("3", "next to", "4"), ("8", "under", "6")] Do not include these samples/examples in the final answer
+
+Do not repeat the spatial relationships and limit the number of tuples to only 20 or less. I do not want the spatial realtionships to be repeated. Please limit them to 20 or less only. I want the list length to be only 20 or less. Do not put the names of the objects in your response, only the numeric ids.
+
+Do not include any other information in your response. Only output a parsable list of tuples describing the given physical relationships between objects in the image.
+'''
 system_prompt = system_prompt_only_top
 
 # gpt_model = "gpt-4-vision-preview"
@@ -209,6 +229,8 @@ def extract_list_of_tuples(text: str):
         try:
             # Convert the string to a list of tuples
             result = ast.literal_eval(list_str)
+            if isinstance(result,tuple):
+                result = ast.literal_eval('['+list_str+']')
             if isinstance(result, list):  # Ensure it is a list
                 return result
         except (ValueError, SyntaxError):
@@ -383,10 +405,12 @@ def consolidate_captions_llava(client: (PreTrainedModel,AutoProcessor), captions
 
     return consolidated_caption
 
-def get_obj_rel_from_image_llava(client: (PreTrainedModel, AutoProcessor), image_path: str, labels: list):
+def get_obj_rel_from_image_llava(client: (PreTrainedModel, AutoProcessor), image_path: str, labels: list, depth_path = None, det_exp_vis_path = None):
     # Getting the base64 string
-    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships between the objects in the image in the format: " + '''[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].'''
-    raw_image = Image.open(image_path).convert('RGB')
+    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships ( on top of, under, above, in, behind, in front of and next to ) between the objects in the image The top image is colored and has annotations and the bottom image is depth of the top."
+    final_image_path = stitch_images(depth_path,image_path,det_exp_vis_path)
+    print("******Stitched Image of depth and annotation for VLM - edges*******",final_image_path)
+    raw_image = Image.open(final_image_path).convert('RGB')
     global system_prompt
     try:
         model = client[0]
@@ -410,9 +434,11 @@ def get_obj_rel_from_image_llava(client: (PreTrainedModel, AutoProcessor), image
     return vlm_answer
 
 
-def get_obj_captions_from_image_llava(client: (PreTrainedModel, AutoProcessor), image_path: str, label_list: list):
+def get_obj_captions_from_image_llava(client: (PreTrainedModel, AutoProcessor), image_path: str, label_list: list, depth_path = None, det_exp_vis_path = None):
     # Getting the base64 string
     base64_image = encode_image_for_openai(image_path)
+    # final_image_path = stitch_images(depth_path,image_path,det_exp_vis_path)
+    # print("******Stitched Image of depth and annotation for VLM - captions*******",final_image_path)
     raw_image = Image.open(image_path).convert('RGB')
 
     user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {label_list}. Please accurately caption the objects in the image."
@@ -486,8 +512,10 @@ def consolidate_captions_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextPr
 
 def get_obj_rel_from_image_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextProcessor), image_path: str, labels: list):
     # Getting the base64 string
-    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships between the objects in the image in the format: " + '''[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].  The top image is colored and has annotations and the bottom image is depth of the top.'''
-    raw_image = Image.open(image_path).convert('RGB')
+    #torch.set_default_dtype(torch.float16)
+    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. Please describe the spatial relationships between the objects in the image in the format: " + '''[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].'''
+    user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {labels}. You gave wrong realtions n the last answer. Please describe the spatial relationships between the objects in the image correctly and logically. Do not repeat the spatial relationships and limit the number of tuples to only 20 or less."
+    raw_image = Image.open(image_path)
     global system_prompt
     try:
         model = client[0]
@@ -497,38 +525,39 @@ def get_obj_rel_from_image_llava_1_6_mistral(client: (PreTrainedModel, LlavaNext
 
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": f"{system_prompt} USER: <image>\n{user_prompt} ASSISTANT: "},
+                    {"type": "text", "text": system_prompt_llava16 + user_prompt},
                     {"type": "image"},
                 ],
             },
         ]
         prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
 
-        inputs = processor(image=raw_image, text=prompt, return_tensors="pt")
+        inputs = processor(images=raw_image, text=prompt, return_tensors="pt")
 
         # autoregressively complete prompt
         output = model.generate(**inputs, max_new_tokens=4000, do_sample=False)
         vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
         print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
         prompt2 = f"{system_prompt}USER:\n{user_prompt}ASSISTANT: "
-        text_to_extract = extract_model_output(vlm_answer_str, prompt2)
+        text_to_extract = extract_model_output(vlm_answer_str, system_prompt_llava16 + user_prompt)
         print(text_to_extract)
         vlm_answer = extract_list_of_tuples(text_to_extract)
-
+    
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         print(f"Setting vlm_answer to an empty list.")
         vlm_answer = []
     print(f"Line 68, user_query: {user_prompt}")
     print(f"Line 97, vlm_answer: {vlm_answer}")
-
+    #default_dtype = torch.get_default_dtype()
+    #torch.set_default_dtype(default_dtype)
     return vlm_answer
 
 
 def get_obj_captions_from_image_llava_1_6_mistral(client: (PreTrainedModel, LlavaNextProcessor), image_path: str, label_list: list):
     # Getting the base64 string
     base64_image = encode_image_for_openai(image_path)
-    raw_image = Image.open(image_path).convert('RGB')
+    raw_image = Image.open(image_path)
 
     user_prompt = f"Here is the list of labels for the annotations of the objects in the image: {label_list}. Please accurately caption the objects in the image."
     global system_prompt_captions
@@ -542,21 +571,21 @@ def get_obj_captions_from_image_llava_1_6_mistral(client: (PreTrainedModel, Llav
 
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": f"{system_prompt_captions} USER: <image>\n{user_prompt} ASSISTANT: "},
+                    {"type": "text", "text": system_prompt_captions + user_prompt },
                     {"type": "image"},
                 ],
             },
         ]
         prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
 
-        inputs = processor(image=raw_image, text=prompt, return_tensors="pt")
+        inputs = processor(images=raw_image, text=prompt, return_tensors="pt")
 
         # autoregressively complete prompt
         output = model.generate(**inputs, max_new_tokens=4000, do_sample=False)
         vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
         print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
         prompt2 = f"{system_prompt_captions}USER:\n{user_prompt}ASSISTANT: "
-        text_to_extract = extract_model_output(vlm_answer_str,prompt2)
+        text_to_extract = extract_model_output(vlm_answer_str,system_prompt_captions + user_prompt)
         print(text_to_extract)
         vlm_answer_captions = vlm_extract_object_captions(text_to_extract)
 
@@ -568,4 +597,20 @@ def get_obj_captions_from_image_llava_1_6_mistral(client: (PreTrainedModel, Llav
     print(f"Line 97, vlm_answer: {vlm_answer_captions}")
 
     return vlm_answer_captions
+
+def stitch_images(image_path1, image_path2, final_path):
+    image1 = cv2.imread(image_path2)
+    image2 = cv2.imread(image_path1)
+    width = max(image1.shape[1], image2.shape[1])
+    image1_resized = cv2.resize(image1, (width, int(image1.shape[0] * width / image1.shape[1])))
+    image2_resized = cv2.resize(image2, (width, int(image2.shape[0] * width / image2.shape[1])))
+
+    # Stitch images vertically
+    stitched_image = cv2.vconcat([image1_resized, image2_resized])
+
+    # Save the result
+    cv2.imwrite((final_path / (image_path1.name + '_stitched_image')).with_suffix('.jpg'), stitched_image)
+    
+    return (final_path / (image_path1.name + '_stitched_image')).with_suffix('.jpg')
+
 

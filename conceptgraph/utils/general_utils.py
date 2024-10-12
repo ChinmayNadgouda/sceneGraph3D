@@ -12,7 +12,8 @@ from conceptgraph.utils.ious import mask_subtract_contained
 import supervision as sv
 import scipy.ndimage as ndi 
 from conceptgraph.utils.vlm import get_obj_captions_from_image_gpt4v, get_obj_rel_from_image_gpt4v, \
-    vlm_extract_object_captions, get_obj_rel_from_image_llava, get_obj_captions_from_image_llava
+    vlm_extract_object_captions, get_obj_rel_from_image_llava, get_obj_captions_from_image_llava, \
+    get_obj_captions_from_image_llava_1_6_mistral, get_obj_rel_from_image_llava_1_6_mistral
 import cv2
 import re
 
@@ -412,7 +413,7 @@ def get_vlm_annotated_image_path(det_exp_vis_path, color_path, w_edges=False, su
     )
     return str(vis_save_path)
 
-def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, make_edges_flag, openai_client):
+def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, make_edges_flag, openai_client, depth_path = None):
     """
     Process detections by filtering, annotating, and extracting object relationships.
 
@@ -447,7 +448,7 @@ def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_la
     edges = []
     captions = []
     edge_image = None
-    if make_edges_flag:
+    if make_edges_flag and len(curr_det.xyxy) > 0:
         vis_save_path_for_vlm = get_vlm_annotated_image_path(det_exp_vis_path, color_path)
         vis_save_path_for_vlm_edges = get_vlm_annotated_image_path(det_exp_vis_path, color_path, w_edges=True)
         annotated_image_for_vlm, sorted_indices = annotate_for_vlm(image, filtered_detections, obj_classes, labels, save_path=vis_save_path_for_vlm)
@@ -462,8 +463,8 @@ def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_la
         cv2.imwrite(str(vis_save_path_for_vlm), annotated_image_for_vlm)
         print(f"Line 313, vis_save_path_for_vlm: {vis_save_path_for_vlm}")
         
-        edges = get_obj_rel_from_image_llava(openai_client, vis_save_path_for_vlm, label_list)
-        captions = get_obj_captions_from_image_llava(openai_client, vis_save_path_for_vlm, label_list)
+        edges = get_obj_rel_from_image_llava_1_6_mistral(openai_client, vis_save_path_for_vlm, label_list)
+        captions = get_obj_captions_from_image_llava_1_6_mistral(openai_client, vis_save_path_for_vlm, label_list)
         edge_image = plot_edges_from_vlm(annotated_image_for_vlm, edges, filtered_detections, obj_classes, labels, sorted_indices, save_path=vis_save_path_for_vlm_edges)
     
     return labels, edges, edge_image, captions
