@@ -6,18 +6,18 @@ To use SIRDataset:
 1. You need either a bag file or color and depth images separately.
 
 IF you have bag file, use align_depth.py from utils_chinmay, in the file edit the bag file path and output paths for color and depth files
-2. Use colmap to generate poses.
-3. Use colmap2nerf.py from utils_chinmay to transform poses from colmap to open3d compatible poses.(python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json)
-4. Transform the json obtained from colmap2nerf.py using read_nerf_json.py
-5. Copy the color and depth files and poses to a folder inside SIRDataset
-6. Run concept graph
+1. Use colmap to generate poses.
+2. Use colmap2nerf.py from utils_chinmay to transform poses from colmap to open3d compatible poses.(python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json)
+3. Transform the json obtained from colmap2nerf.py using read_nerf_json.py
+4. Copy the color and depth files and poses to a folder inside SIRDataset
+5. Run concept graph
 
 IF you have color and depth images
-2. Use colmap to generate poses.
-3. Use colmap2nerf.py from utils_chinmay to transform poses from colmap to open3d compatible poses. (python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json)
-4. Transform the json obtained from colmap2nerf.py using read_nerf_json.py
-5. Copy the color and depth files and poses to a folder inside SIRDataset
-6. Run concept graph
+1. Use colmap to generate poses.
+2. Use colmap2nerf.py from utils_chinmay to transform poses from colmap to open3d compatible poses. (python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json)
+3. Transform the json obtained from colmap2nerf.py using read_nerf_json.py
+4. Copy the color and depth files and poses to a folder inside SIRDataset
+5. Run concept graph
 
 
 From below, the README is same as it is on the main concept graph page.
