@@ -1080,7 +1080,7 @@ class SIRDataset(GradSLAMDataset):
         )
 
     def get_filepaths(self):
-        color_paths = natsorted(glob.glob(f"{self.input_folder}/color/*.jpg"))
+        color_paths = natsorted(glob.glob(f"{self.input_folder}/color/*.png"))
         depth_paths = natsorted(glob.glob(f"{self.input_folder}/depth/*.png"))
 
         embedding_paths = None
@@ -1092,15 +1092,28 @@ class SIRDataset(GradSLAMDataset):
 
     def load_poses(self):
         poses = []
+        color_paths_new = []
+        depth_paths_new = []
         with open(self.pose_path, "r") as f:
             lines = f.readlines()
-        for i in range(self.num_imgs):
-            line = lines[i]
-            c2w = np.array(list(map(float, line.split()))).reshape(4, 4)
-            c2w[:3, 1] *= -1
-            c2w[:3, 2] *= -1
-            c2w = torch.from_numpy(c2w).float()
-            poses.append(c2w)
+        for pose in range(len(lines)):    
+            for i in range(self.num_imgs):
+                line = lines[pose]
+                image_id = self.color_paths[i].split('/')[-1].split('.')[0]
+                if( line.split()[0] == image_id ):
+                    print(line.split()[0], self.color_paths[i])
+                    c2w = np.array(list(map(float, line.split()[1:]))).reshape(4, 4)
+                    c2w[:3, 1] *= -1
+                    c2w[:3, 2] *= -1
+                    c2w = torch.from_numpy(c2w).float()
+                    poses.append(c2w)
+                    color_paths_new.append(self.color_paths[i])
+                    depth_paths_new.append(self.depth_paths[i])
+        print(color_paths_new[1:30])
+        self.color_paths = color_paths_new
+        self.depth_paths = depth_paths_new
+        self.num_imgs = len(color_paths_new)
+            
         return poses
     
     """

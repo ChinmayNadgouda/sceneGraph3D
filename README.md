@@ -2,6 +2,23 @@ This is an extension to the already developed concept graph in this [link](https
 The code is for the fulfillment of master's thesis at the University of Stuttgart.
 The main intension is to have the concept graph run on SceneFun3D dataset, compare and evaluate different foundation models used and to enhance fine-grained relationship detection.
 
+To use SIRDataset:
+1. You need either a bag file or color and depth images separately.
+
+IF you have bag file, use align_depth.py from utils_chinmay, in the file edit the bag file path and output paths for color and depth files
+2. Use colmap to generate poses.
+3. Use colmap2nerf.py from utils_chinmay to transform poses from colmap to open3d compatible poses.(python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json)
+4. Transform the json obtained from colmap2nerf.py using read_nerf_json.py
+5. Copy the color and depth files and poses to a folder inside SIRDataset
+6. Run concept graph
+
+IF you have color and depth images
+2. Use colmap to generate poses.
+3. Use colmap2nerf.py from utils_chinmay to transform poses from colmap to open3d compatible poses. (python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json)
+4. Transform the json obtained from colmap2nerf.py using read_nerf_json.py
+5. Copy the color and depth files and poses to a folder inside SIRDataset
+6. Run concept graph
+
 
 From below, the README is same as it is on the main concept graph page.
 # ConceptGraphs: Open-Vocabulary 3D Scene Graphs for Perception and Planning

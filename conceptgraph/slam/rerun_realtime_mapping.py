@@ -112,7 +112,7 @@ def main(cfg : DictConfig):
     orr = OptionalReRun()
     orr.set_use_rerun(cfg.use_rerun)
     orr.init("realtime_mapping")
-    orr.connect('141.58.225.84:9876')
+    orr.connect('141.58.226.203:9876')
 
     #orr.spawn()
 
@@ -184,7 +184,7 @@ def main(cfg : DictConfig):
         sam_predictor = SAM('mobile_sam.pt') # UltraLytics SAM
         # sam_predictor = measure_time(get_sam_predictor)(cfg) # Normal SAM
         clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
-            "ViT-B-32", "laion400m_e31"
+            "ViT-B-16", "laion400m_e31"
         )
         # clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
         #     "ViT-H-14", "laion2b_s32b_b79k"
@@ -210,8 +210,8 @@ def main(cfg : DictConfig):
                     )
         model = LlavaNextForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16, low_cpu_mem_usage=True, quantization_config=bnb_config,
                     use_flash_attention_2=True ) 
-        processor = None
-        model = None
+        #processor = None
+        #model = None
         
     else:
         print("\n".join(["NOT Running detections..."] * 10))

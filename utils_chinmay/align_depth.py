@@ -13,11 +13,13 @@ import numpy as np
 import cv2
 import os
 
-depth_dir = '/home/gokul/ConceptGraphs/datasets/own/record1/results'
+depth_dir = '/home/student/ConceptGraph/datasets/SIRDataset/oct/18/depth'
+color_dir = '/home/student/ConceptGraph/datasets/SIRDataset/oct/18/color'
 os.makedirs(depth_dir, exist_ok=True)
+os.makedirs(color_dir, exist_ok=True)
 # Create a pipeline
 pipeline = rs.pipeline()
-fname = '/home/gokul/ConceptGraphs/20240924_101254.bag'
+fname = '/home/student/Data/20241018_110252.bag'
 # Create a config and configure the pipeline to stream
 #  different resolutions of color and depth streams
 config = rs.config()
@@ -81,12 +83,13 @@ try:
 
         depth_image = np.asanyarray(aligned_depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
+        color_image_bgr = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
         depth_filename = os.path.join(depth_dir, f'depth_{count}.png')
-        color_filename = os.path.join(depth_dir, f'rgb_{count}.png')
+        color_filename = os.path.join(color_dir, f'rgb_{count}.png')
 
         count += 1
         cv2.imwrite(depth_filename, depth_image)
-        cv2.imwrite(color_filename, color_image)
+        cv2.imwrite(color_filename, color_image_bgr)
 
         # # Remove background - Set pixels further than clipping_distance to grey
         # grey_color = 153
