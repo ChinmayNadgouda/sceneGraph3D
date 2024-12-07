@@ -1,0 +1,11 @@
+export QT_QPA_PLATFORM=offscreen
+
+sudo apt install libxcb-cursor0
+
+sudo apt install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0
+
+pip install opencv-python-headless
+
+Note: do not run in conda, run outside. And outside only install opencv-python-headless and try only first command (export)
+
+
