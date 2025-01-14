@@ -1,0 +1,1000 @@
+  887  cd own_dataset/
+  888  ls
+  889  mv ../output5/rgb/ ./
+  890  ls
+  891  mv ../output5/depth/ ./
+  892  ls
+  893  sudo colmap --help
+  894  colmap automatic_reconstructor --help
+  895  pwd
+  896  colmap automatic_reconstructor --project_path /home/student/Data/own_dataset --workspace_path /home/student/Data/own_dataset --data_type individual --quality high --camera_model PINHOLE --single_camera 1
+  897  colmap automatic_reconstructor --workspace_path /home/student/Data/own_dataset --data_type individual --quality high --camera_model PINHOLE --single_camera 1
+  898  colmap automatic_reconstructor --project_path /home/student/Data/own_dataset --workspace_path /home/student/Data/own_dataset --data_type individual --quality high --camera_model PINHOLE --single_camera 1 --image_path /home/student/Data/own_dataset
+  899  colmap automatic_reconstructor --workspace_path /home/student/Data/own_dataset --data_type individual --quality high --camera_model PINHOLE --single_camera 1 --image_path /home/student/Data/own_dataset
+  900  exit
+  901  cd Data/own_dataset/
+  902  ls
+  903  apt install tmux
+  904  sudo apt install tmux
+  905  tmux -l
+  906  tmux ls
+  907  tmux 
+  908  tmux ls
+  909  ls
+  910  tmux a
+  911  tmux ls
+  912  cd Data/
+  913  ls
+  914  cd own_dataset/
+  915  ls
+  916  cd depth
+  917  ls
+  918  cd ..
+  919  ls
+  920  mkdir d
+  921  mkdir r
+  922  cp --help
+  923  cp ./depth/depth_{1..500}_resized.png ./d
+  924  ls ./d
+  925  ls -1 | wc -l ./d
+  926  cd d && ls -1 | wc -l 
+  927  cd ..
+  928  cp ./rgb/rgb_{1..500}.png ./r
+  929  cd rgb
+  930  ls -1 | wc -l
+  931  cd ../r
+  932  ls -1 | wc -l
+  933  cd ..
+  934  df -Th ./
+  935  du -sh ./
+  936  du -sh 
+  937  cd d
+  938  du -sh 
+  939  cd ..
+  940  cd r
+  941  du -sh 
+  942  cd ..
+  943  exit
+  944  colmap automatic_reconstructor --workspace_path /home/student/Data/own_dataset --data_type individual --quality high --camera_model PINHOLE --single_camera 1 --image_path /home/student/Data/own_dataset
+  945  glomap
+  946  colmap --hrlp
+  947  colmap --help
+  948  ls
+  949  cd D
+  950  cd Data/
+  951  ls
+  952  cd ../glomap/
+  953  ls
+  954  cd build/
+  955  ls
+  956  cd cmake-3.30.1/
+  957  ./bootstrap && make -j$(nproc) && sudo make install
+  958  sudo -l
+  959  sudo
+  960  ./bootstrap && make -j$(nproc) && sudo /usr/bin/make install
+  961  pwd
+  962  cd ..
+  963  ls
+  964  cd cmake/
+  965  ls
+  966  cd ..
+  967  tmux ls
+  968  ls
+  969  cd Data/
+  970  ls
+  971  cd own_dataset/
+  972  ls
+  973  colmap gui
+  974  colmap --help
+  975  sudo colmap --help
+  976  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/deactivate/bash/envVars.txt
+  977  sudo
+  978  su
+  979  sudo colmap --help
+  980  colmap --help
+  981  whereis opencv
+  982  cd /home/student/
+  983  ls
+  984  https://github.com/projair/project-air-frontend/pull/319
+  985  git clone --recursive https://github.com/stevenlovegrove/Pangolin.git
+  986  cd Pangolin/
+  987  ls
+  988  ./scripts/install_prerequisites.sh recommended
+  989  cmake -B build -GNinja
+  990  cmake --build build
+  991  cmake --build build -t pypangolin_pip_install
+  992  pip
+  993  cd /home/student/Pangolin/build
+  994  /usr/bin/python3.10 -m pip install /home/student/Pangolin/build/pypangolin-0.9.2-cp310-cp310-linux_x86_64.whl --force-reinstall
+  995  sudo apt install python3-pip
+  996  cd ..
+  997  cmake --build build -t pypangolin_pip_install
+  998  cmake -B build -G Ninja -D BUILD_TESTS=ON
+  999  cmake --build build
+ 1000  cd build/
+ 1001  ctest'
+ 1002  ctest
+ 1003  sudo apt-get install libopencv
+ 1004  sudo apt install libopencv
+ 1005  sudo apt install libopencv*
+ 1006  cd 
+ 1007  pwd
+ 1008  git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2
+ 1009  cd ORB_SLAM2/
+ 1010  chmod +x build.sh
+ 1011  ./build.sh 
+ 1012  ls
+ 1013  vim CMakeLists.txt 
+ 1014  apt install vim
+ 1015  sudo apt install vim
+ 1016  vim CMakeLists.txt 
+ 1017  ./build.sh 
+ 1018  vim CMakeLists.txt 
+ 1019  ./build.sh 
+ 1020  sudo apt remove libopencv*
+ 1021  sudo apt remove libopencv3
+ 1022  git clone https://github.com/opencv/opencv.git
+ 1023  cd opencv/
+ 1024  git checkout 3.3.1
+ 1025  cd ..
+ 1026  git clone https://github.com/opencv/opencv_contrib.git
+ 1027  cd opencv_contrib/
+ 1028  git checkout 3.3.1
+ 1029  cd ..
+ 1030  cd opencv
+ 1031  mkdir build
+ 1032  cd build/
+ 1033  cmake -D CMAKE_BUILD_TYPE=RELEASE       -D CMAKE_INSTALL_PREFIX=/usr/local       -D INSTALL_C_EXAMPLES=ON       -D INSTALL_PYTHON_EXAMPLES=ON       -D WITH_TBB=ON       -D WITH_V4L=ON       -D WITH_QT=ON       -D WITH_OPENGL=ON       -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules       -D BUILD_EXAMPLES=ON ..
+ 1034  nproc
+ 1035  make -j16
+ 1036  sudo make install
+ 1037  sudo /usr/bin/make install
+ 1038  cd ..
+ 1039  ls
+ 1040  ./build.sh 
+ 1041  sudo apt search libopencv
+ 1042  groups student
+ 1043  su -
+ 1044  sudo visudo
+ 1045  cat visudo
+ 1046  cat /usr/sbin/visudo
+ 1047  sudo apt install libopencv*
+ 1048  ./build.sh '
+ 1049  ./build.sh 
+ 1050  pangolin
+ 1051  sudo apt install libeigen3-dev
+ 1052  ./build.sh 
+ 1053  cd build/
+ 1054  ls
+ 1055  cd ..
+ 1056  ls
+ 1057  vim CMakeLists.txt 
+ 1058  cd build/
+ 1059  ls
+ 1060  vim CMake
+ 1061  cd ..
+ 1062  rm -rf build
+ 1063  ./build.sh 
+ 1064  cd /home/student/ORB_SLAM2/include/
+ 1065  vim ORBextractor.h 
+ 1066  ./build.sh 
+ 1067  cd .
+ 1068  cd ..
+ 1069  ./build.sh 
+ 1070  firefox
+ 1071  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1072  git pull
+ 1073  cd /home/student/ConceptGraph/
+ 1074  ls
+ 1075  git pull
+ 1076  cd sceneGraph3D/
+ 1077  git pull
+ 1078  git pull.rebase true
+ 1079  git config  pull.rebase true
+ 1080  git pull
+ 1081  git status
+ 1082  cd utils_chinmay/
+ 1083  python align_depth.py 
+ 1084  conda activate chinmay-thesis
+ 1085  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1086  export QT_DEBUG_PLUGINS = 1
+ 1087  export QT_DEBUG_PLUGINS=1
+ 1088  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1089  exit
+ 1090  cond activate chinmay-thesis
+ 1091  conda activate chinmay-thesis
+ 1092  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1093  printenv LD_LIBRARY_PATH
+ 1094  printenv
+ 1095  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1096  export LD_LIBRARY_PATH=/home/student/anaconda3/envs/chinmay-thesis/lib/python3.10/site-packages/cv2/qt/plugins/platforms/libqxcb.so:$LD_LIBRARY_PATH
+ 1097  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1098  pip install PyQt5
+ 1099  conda install pyqt
+ 1100  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1101  pip uninstall opencv-python
+ 1102  pip install opencv-python==4.2.0.34
+ 1103  pip install opencv-python==3.4.18.65
+ 1104  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1105  pip uninstall opencv-python==3.4.18.65
+ 1106  pip uninstall opencv-python
+ 1107  pipinstall opencv-python
+ 1108  pip install opencv-python
+ 1109  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/ --run_colmap --colmap_matcher sequential
+ 1110  exit
+ 1111  cd /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/
+ 1112  ls
+ 1113  cat working_colmap_nerf_replica.txt 
+ 1114  tmux
+ 1115  conda activate chinmay-thesis
+ 1116  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color/^C-run_colmap --colmap_matcher sequential
+ 1117  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color -run_colmap --colmap_matcher sequential
+ 1118  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1119  export QT_DEBUG_PLUGINS=1
+ 1120  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1121  ldd /home/student/anaconda3/envs/chinmay-thesis/lib/python3.10/site-packages/cv2/qt/plugins/platforms/libqxcb.so
+ 1122  python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1123  tmux ls
+ 1124  tmux
+ 1125  cd /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/
+ 1126  vim qt_error.txt
+ 1127  cat qt_error.txt 
+ 1128  ls
+ 1129  mv transforms.json transforms_replica.json 
+ 1130  mv nerf.txt nerf_replica.txt 
+ 1131  ls
+ 1132  cd /home/student/ConceptGraph/datasets/SIRDataset/sept/24/
+ 1133  ls
+ 1134  cd color/
+ 1135  ls
+ 1136  tmux a
+ 1137  colmap --help
+ 1138  tumx a
+ 1139  tmux a
+ 1140  conda activate thesis
+ 1141  conda activate chinmay-thesis
+ 1142  cd /home/student/ConceptGraph/sceneGraph3D/conceptgraph/s
+ 1143  cd /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/
+ 1144  python rerun_realtime_mapping.py 
+ 1145  python
+ 1146  python3 -m pip install scipy -I
+ 1147  python rerun_realtime_mapping.py 
+ 1148  python3 -m pip uninstall numpy
+ 1149  python3 -m pip install numpy==1.26.4
+ 1150  python3 -m pip uninstall numpy
+ 1151  pip install --force-reinstall --no-deps numpy==2.1.2
+ 1152  python3 -m pip install numpy==1.26.4 -I
+ 1153  python rerun_realtime_mapping.py 
+ 1154  ls
+ 1155  sudo python colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1156  vim ConceptGraph/sceneGraph3D/utils_chinmay/colmap2nerf.py 
+ 1157  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1158  cd ConceptGraph/sceneGraph3D/utils_chinmay/ 
+ 1159  conda activate thesis
+ 1160  conda activate chinmay-thesis
+ 1161  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1162  python 
+ 1163  pip uninstall python-opencv
+ 1164  pip uninstall opencv-python
+ 1165  pip uninstall opencv-python=4.1.2.30
+ 1166  pip uninstall opencv-python==4.1.2.30
+ 1167  pip install opencv-python==4.1.2.30
+ 1168  pip uninstall num
+ 1169  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1170  pip uninstall opencv-python
+ 1171  pip install opencv-python
+ 1172  pip uninstall opencv-python
+ 1173  pip install opencv-python-headless
+ 1174  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1175  pip install opencv-python
+ 1176  sudo apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+ 1177  sudo apt install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+ 1178  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1179  conda deactivate
+ 1180  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1181  pip install opencv-headless
+ 1182  pip install opencv-python-headless
+ 1183  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1184  ldd /usr/lib/qt/plugins/platforms/libqxcb.so
+ 1185  sudo apt install linuxdeployqt
+ 1186  sudo apt install libxcb-xinerama0
+ 1187  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1188  sudo apt install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0
+ 1189  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1190  sudo apt install libxcb-cursor0
+ 1191  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1192  export QT_QPA_PLATFORM=offscreen
+ 1193  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1194  colmap sequential_matcher --SiftMatching.guided_matching=true --database_path colmap.db
+ 1195  qmake -v
+ 1196  sudo apt install qt5-default
+ 1197  pip install PyQt5
+ 1198  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1199  pip uninstall numpy
+ 1200  pip install numpy==2.0.1
+ 1201  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1202  pip uninstall numpy
+ 1203  pip install numpy==1.19.5
+ 1204  pip install numpy
+ 1205  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1206  pip uninstall numpy
+ 1207  pip install numpy==2.0
+ 1208  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1209  pip uninstall numpy
+ 1210  pip install numpy
+ 1211  pip uninstall opencv-python-headless
+ 1212  pip uninstall opencv-python
+ 1213  pip install opencv-python-headless
+ 1214  pip install opencv-python
+ 1215  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1216  pip install PyQt5
+ 1217  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1218  python
+ 1219  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1220  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1221  python read_nerf_json.py 
+ 1222  conda activate chinmay-thesis
+ 1223  python read_nerf_json.py 
+ 1224  tmux a
+ 1225  ps
+ 1226  ps -e
+ 1227  ps -e | grep code
+ 1228  ps -e 
+ 1229  gnome-session-quit
+ 1230  sudo pkill -u student
+ 1231  pkill -u student
+ 1232  tumx a
+ 1233  tmux a
+ 1234  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1235  cd /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/
+ 1236  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/sept/24/color --run_colmap --colmap_matcher sequential
+ 1237  firefox
+ 1238  snap install firefox
+ 1239  sudo firefox
+ 1240  ls
+ 1241  mv poses.txt /home/student/ConceptGraph/datasets/SIRDataset/sept/24/
+ 1242  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1243  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/read_nerf_json.py
+ 1244  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1245  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/align_depth.py
+ 1246  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1247  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1248  cd /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/
+ 1249  python3 colmap2nerf.py  --help
+ 1250  python3 colmap2nerf.py  --images /home/student/Data/output2/sparse/ --out /home/student/Data/output2/sparse/
+ 1251  python3 colmap2nerf.py  --images /home/student/Data/output2/sparse/images.txt --out /home/student/Data/output2/sparse/
+ 1252  python3 colmap2nerf.py  --images /home/student/Data/output2/sparse/images.txt --out /home/student/Data/output2/sparse/output2.json
+ 1253  python3 colmap2nerf.py  --text /home/student/Data/output2/sparse --out /home/student/Data/output2/sparse/output2.json
+ 1254  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1255  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1256  pwd
+ 1257  nvidia-smi
+ 1258  colmap gui
+ 1259  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/align_depth.py
+ 1260  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.14.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1261  ls /home/student/Data/
+ 1262  cd /home/studetn/./
+ 1263  cd /home/student/./
+ 1264  ls
+ 1265  cd /home/student/./Data
+ 1266  ls
+ 1267  cd /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/
+ 1268  python3 colmap2nerf.py --help
+ 1269  ls
+ 1270  mv transforms.json transforms_sept24.json
+ 1271  ls
+ 1272  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/oct/18^Color --run_colmap --colmap_matcher sequential
+ 1273  python3 colmap2nerf.py  --images /home/student/ConceptGraph/datasets/SIRDataset/oct/18/color --run_colmap --colmap_matcher sequential
+ 1274  colmap gui
+ 1275  nvidia-smi
+ 1276  cd /home/student/ConceptGraph/datasets/Replica/room0_c/exps/r_mapping_stride19/
+ 1277  ls
+ 1278  cd ..
+ 1279  ls
+ 1280  du -sh ./
+ 1281  du - ./
+ 1282  du -sh *
+ 1283  exit
+ 1284  glxgears
+ 1285  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/scripts/visualize_cfslam_results.py
+ 1286  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/scripts/visualize_cfslam_results.py --result_path /home/student/ConceptGraph/datasets/Replica/room0_c/exps/r_mapping_stride19/pcd_r_mapping_stride19.pkl.gz
+ 1287  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/read_nerf_json.py
+ 1288  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1289  home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1290  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/slam/rerun_realtime_mapping.py
+ 1291  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/yolo_test_fine_relationships.py
+ 1292  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/scripts/visualize_cfslam_results.py --result_path /home/student/ConceptGraph/datasets/Replica/room0_c/exps/r_mapping_stride19/pcd_r_mapping_stride19.pkl.gz
+ 1293  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/yolo_test_fine_relationships.py
+ 1294  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.16.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.16.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1295  ls
+ 1296  pwd
+ 1297  nvidia-smi
+ 1298  pkill -9 2154547
+ 1299  nvidia-smi
+ 1300  pkill -9 2154547
+ 1301  nvidia-smi
+ 1302  ps | grep python
+ 1303  ps 
+ 1304  nvidia-smi
+ 1305  sudo kill -9 2155484
+ 1306  kill -9 2155484
+ 1307  kill -9 2154547
+ 1308  nvidia-smi
+ 1309  kill -9 2155919
+ 1310  nvidia-smi
+ 1311  kill -9 2156383
+ 1312  history
+ 1313  history | head 100
+ 1314  history | head -100
+ 1315  cd /home/student/ConceptGraph/datasets/
+ 1316  ls
+ 1317  cd cvpr24-challenge/
+ 1318  ls
+ 1319  cd challenge_track_2/
+ 1320  ls
+ 1321  python -m data_downloader.data_asset_download --split dev --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1322  conda activate thesis
+ 1323  conda activate chinmay-thesis
+ 1324  python -m data_downloader.data_asset_download --split dev --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1325  ls
+ 1326  pip -r requirements.txt 
+ 1327  pip --help requirements.txt 
+ 1328  pip install requirements.txt 
+ 1329  pip install -r requirements.txt 
+ 1330  cat requirements.txt 
+ 1331  pip install moviepy
+ 1332  python -m data_downloader.data_asset_download --split dev --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1333  python -m data_downloader.data_asset_download --split sample_scene --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1334  python -m data_downloader.data_asset_download --split sample_scene --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets 3dod_annotation
+ 1335  git status
+ 1336  cd ..
+ 1337  ls
+ 1338  cd challenge_track_1/
+ 1339  ls
+ 1340  git status
+ 1341  python -m data_downloader.data_asset_download --split sample_scene --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets 3dod_annotation
+ 1342  cd ../challenge_track_2/cd 
+ 1343  cd
+ 1344  git clone https://github.com/SceneFun3D/scenefun3d.git
+ 1345  cd scenefun3d/
+ 1346  ls
+ 1347  python -m data_downloader.data_asset_download --split train_split --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1348  python -m data_downloader.data_asset_download --split train_val_split --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1349  python -m data_downloader.data_asset_download --split train_val_set --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets annotations descriptions
+ 1350  python -m data_downloader.data_asset_download --split train_val_set --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets laser_scan_5mm --video_id 468496
+ 1351  cd
+ 1352  git clone https://github.com/HuguesTHOMAS/KPConv.git
+ 1353  cd KPConv/
+ 1354  ls
+ 1355  cat /etc/shadow
+ 1356  sudo cat /etc/shadow
+ 1357  sudo su
+ 1358  sudo -s
+ 1359  conda activate thesis
+ 1360  conda activate chinmay-thesis
+ 1361  python3 colmap2nerf.py  --text /home/student/ConceptGraph/datasets/SIRDataset/oct/18/sparse/0/ --out /home/student/ConceptGraph/datasets/SIRDataset/oct/18/sparse/0/output.json
+ 1362  colmap --help
+ 1363  colmap --model_converter  --help
+ 1364  colmap -model_converter  --help
+ 1365  colmap model_converter  --help
+ 1366  colmap model_converter  --input_path ./ --output_path ./
+ 1367  colmap model_converter  --input_path ./ --output_path ./ --output_type TXT
+ 1368  python3 colmap2nerf.py  --text /home/student/ConceptGraph/datasets/SIRDataset/oct/18/sparse/0/ --out /home/student/ConceptGraph/datasets/SIRDataset/oct/18/sparse/0/output.json
+ 1369  pwdpwd
+ 1370  pwd
+ 1371  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/yolo_test_fine_relationships.py
+ 1372  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/scripts/lava_16_test.py
+ 1373  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.18.1-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.18.1-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1374  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/conceptgraph/scripts/lava_16_test.py
+ 1375  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1376  conda activate chinmay-thesis
+ 1377  sudo apt-get install libhdf5-dev
+ 1378  sudo apt install libhdf5-dev
+ 1379  pip install h5py
+ 1380  git clone https://github.com/charlesq34/pointnet.git
+ 1381  cd pointnet/
+ 1382  ls
+ 1383  python train.py
+ 1384  pip install tensorflow
+ 1385  python train.py
+ 1386  pip install numpy==1.26.4
+ 1387  python train.py
+ 1388  cd
+ 1389  ls
+ 1390  cd ConceptGraph/datasets/cvpr24-challenge/
+ 1391  ls
+ 1392  cd challenge_track_2
+ 1393  ls
+ 1394  python -m data_downloader.data_asset_download --split s --download_dir /home/student/ --download_only_one_video_sequence --dataset_assets laser_scan_5mm --video_id 468496
+ 1395  cd
+ 1396  ls
+ 1397  cd scenefun3d/
+ 1398  ls
+ 1399  python -m data_downloader.data_asset_download --split sample_scene --download_dir /home/student/dev/ --download_only_one_video_sequence --dataset_assets laser_scan_5mm annotations
+ 1400  python -m data_downloader.data_asset_download --split train_val_set --download_dir /home/student/dev/ --download_only_one_video_sequence --dataset_assets laser_scan_5mm annotations
+ 1401  vim label.txt
+ 1402  cd
+ 1403  cd scenefun3d/
+ 1404  python -m data_downloader.data_asset_download --split train_val_set --download_dir /home/student/dev/ --download_only_one_video_sequence --dataset_assets laser_scan_5mm annotations
+ 1405  conda activate thesis
+ 1406  conda activate chinmay-thesis
+ 1407  python -m data_downloader.data_asset_download --split train_val_set --download_dir /home/student/dev/ --download_only_one_video_sequence --dataset_assets laser_scan_5mm annotations
+ 1408  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/get_pcd.py
+ 1409  pip install torch_geometric
+ 1410  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train.py
+ 1411  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/get_pcd.py
+ 1412  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train.py
+ 1413  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/get_pcd.py
+ 1414  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train.py
+ 1415  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1416  pwd
+ 1417  cd
+ 1418  cd test_without_exclude_class/
+ 1419  vim label.txt
+ 1420  mv ../train_without_exclude_class/42721025-c5a7-412a-8fdc-e5bf4110d26b.ply ./
+ 1421  mv ../train_without_exclude_class/.ply ./
+ 1422  mv ../train_without_exclude_class/b6df5340-f2b4-4aa1-b9b0-2fe5ab37b675.ply ./
+ 1423  mv ../train_without_exclude_class/21af6242-1b15-48a0-9d65-c742c5d29c17.ply ./
+ 1424  mv ../train_without_exclude_class/4ee997c0-6084-4bae-95de-067fba40a2d6.ply ../train_without_exclude_class/06c298b1-b45a-4da4-ba14-95beabb02509.ply ../train_without_exclude_class/4aa28fdd-640e-48d7-838f-3891fdfd8fc6.ply ../train_without_exclude_class/3e81ff77-6b45-4950-9fcc-fc3a272d697b.ply ./
+ 1425  mv ../train_without_exclude_class/e3d1ee59-6815-417f-9524-7b7c19f82ee9.ply ./
+ 1426  mv ../train_without_exclude_class/58201897-ce5f-4426-a8be-bec329c939f9.ply ./
+ 1427  mv ../train_without_exclude_class/ce76a1f4-b180-47fb-ac33-07fd1657e243.ply ./
+ 1428  l
+ 1429  cd
+ 1430  l
+ 1431  cd Data/;l
+ 1432  l
+ 1433  vlc output2.mkv 
+ 1434  gedit
+ 1435  xhost +local:root
+ 1436  xhost local:root
+ 1437  gedit
+ 1438  cd ..
+ 1439  l
+ 1440  cd student/
+ 1441  l
+ 1442  cd Data/
+ 1443  l
+ 1444  vlc output2.mkv 
+ 1445  l
+ 1446  rosbag
+ 1447  rviz2
+ 1448  man ln
+ 1449  l
+ 1450  man ln
+ 1451  ln -s 20241018_110252.bag /home/fabioscap/data
+ 1452  sudo ln -s 20241018_110252.bag /home/fabioscap/data.bag
+ 1453  sudo su
+ 1454  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train.py
+ 1455  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/get_pcd.py
+ 1456  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train.py
+ 1457  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train_bbox.py
+ 1458  /home/student/anaconda3/envs/chinmay-thesis/bin/python
+ 1459  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/myown_train_bbox.py
+ 1460  python3
+ 1461  python
+ 1462  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1463  /bin/python /home/student/pointnet2/part_seg/train.py
+ 1464  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/pointnet2/part_seg/train.py
+ 1465  conda activate pointnet2
+ 1466  cd part_seg/
+ 1467  python train.py 
+ 1468  echo $CUDA_HOME
+ 1469  echo $LD_LIBRARY_PATH
+ 1470  echo $TF_LIB
+ 1471  echo TF_LIB
+ 1472  echo $TF_LIB
+ 1473  echo $TF_INC
+ 1474  export CUDA_HOME=/usr/local/cuda-12
+ 1475  echo $CUDA_HOME
+ 1476  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-12/lib64
+ 1477  echo $LD_LIBRARY_PATH
+ 1478  python train.py 
+ 1479  pip show tensorflow
+ 1480  pip install --upgrade tensorflow
+ 1481  /bin/python3 /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1482  nvcc
+ 1483  conda activate chinmay-thesis
+ 1484  nvcc
+ 1485  cd /home/student/anaconda3/envs/chinmay-thesis/lib/python3.10/site-packages/tensorflow/include
+ 1486  ls
+ 1487  cd include/
+ 1488  ls
+ 1489  cd ..
+ 1490  ls
+ 1491  cd ..
+ 1492  ls
+ 1493  cd python/
+ 1494  ls
+ 1495  cd lib/
+ 1496  ls
+ 1497  cd core/
+ 1498  ls
+ 1499  cd ..
+ 1500  ls
+ 1501  cd core/
+ 1502  ls
+ 1503  cd lib/
+ 1504  ls
+ 1505  cd core/
+ 1506  ls
+ 1507  cd ..
+ 1508  ls
+ 1509  cd ..
+ 1510  ls
+ 1511  cd include/
+ 1512  ls
+ 1513  cd tensorflow/
+ 1514  ls
+ 1515  cd include/
+ 1516  ls
+ 1517  cd external/
+ 1518  ls
+ 1519  cd ..
+ 1520  sl
+ 1521  ls
+ 1522  ls co
+ 1523  ls core
+ 1524  ls core/lib/
+ 1525  ls core/lib
+ 1526  cd
+ 1527  nvidia-smi
+ 1528  cd /usr/local/cuda-12/
+ 1529  ls
+ 1530  cd 
+ 1531  cd pointnet2/tf_ops/3d_interpolation/
+ 1532  ./tf_interpolate_compile.sh 
+ 1533  cd ..
+ 1534  cd grouping/
+ 1535  chmod +x tf_grouping_compile.sh
+ 1536  ./tf_grouping_compile.sh 
+ 1537  cd ../sampling/
+ 1538  chmod +x tf_sampling_compile.sh
+ 1539  ./tf_sampling_compile.sh
+ 1540  ls
+ 1541  ./tf_sampling_compile.sh
+ 1542  cd ../3d_interpolation/
+ 1543  ./tf_interpolate_compile.sh 
+ 1544  cd
+ 1545  conda create -n pointnet2 python=2.7
+ 1546  pip install tensorflow==1.2.0
+ 1547  [200~pip install tensorflow==1.2.0~
+ 1548  pip install tensorflow==1.2.0
+ 1549  conda activate pointnet2
+ 1550  pip install tensorflow==1.2.0
+ 1551  pip install opencv-python
+ 1552  pip install h5py
+ 1553  pip install opencv-python
+ 1554  pip install opencv-python==4.2.0.32
+ 1555  python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())'
+ 1556  cd pointnet2/tf_ops/3d_interpolation/
+ 1557  ./tf_interpolate_compile.sh 
+ 1558  g++ --version
+ 1559  ./tf_interpolate_compile.sh 
+ 1560  pip uninstall tensorflow
+ 1561  pip uninstall tensorflow-gpu==1.2.0
+ 1562  pip install tensorflow-gpu==1.2.0
+ 1563  python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())'
+ 1564  python -c 'import tensorflow as tf'
+ 1565  python -c 'import tensorflow as tf; print(tf.__version__)'
+ 1566  conda deactivate 
+ 1567  conda create -n pointnet22 python=2.7 tensorflow=1.15 cudatoolkit=8.0 cudnn=7.6
+ 1568  conda activate pointnet2
+ 1569  pip uninstall tensorflow-gpu
+ 1570  pip install tensorflow-gpu
+ 1571  pip install tensorflow
+ 1572  python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())'
+ 1573  ./tf_interpolate_compile.sh 
+ 1574  TF_INC=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
+ 1575  TF_LIB=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
+ 1576  ./tf_interpolate_compile.sh 
+ 1577  find / -name "libtensorflow_framework.so" 2>/dev/null
+ 1578  find /home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/ -name 'libtensorflow_framework.so'
+ 1579  cd /home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/ 
+ 1580  ls
+ 1581  ln -s  /home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so.2 home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so
+ 1582  vim home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so
+ 1583  ls
+ 1584  ln -s  /home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so.2 home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so
+ 1585  ls
+ 1586  mv libtensorflow_framework.so ../
+ 1587  ln -s  /home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so.2 /home/student/anaconda3/envs/pointnet2/lib/python2.7/site-packages/tensorflow_core/libtensorflow_framework.so
+ 1588  ls
+ 1589  cd 
+ 1590  cd pointnet2/tf_ops/3d_interpolation/
+ 1591  ./tf_interpolate_compile.sh 
+ 1592  ls
+ 1593  cd ../grouping/
+ 1594  ls
+ 1595  chmod +x tf_grouping_compile.sh
+ 1596  ls
+ 1597  ./tf_grouping_compile.sh 
+ 1598  nvcc
+ 1599  ./tf_grouping_compile.sh 
+ 1600  wget https://developer.download.nvidia.com/compute/cuda/8.0/secure/Production/8.0.61/cudnn/v7.0/cuda_8.0.61_375.26_linux.run
+ 1601  sudo sh cuda_8.0.61_375.26_linux.run
+ 1602  chmod +x cuda_8.0.61_375.26_linux.run
+ 1603  sudo sh cuda_8.0.61_375.26_linux.run
+ 1604  sh cuda_8.0.61_375.26_linux.run
+ 1605  ./cuda_8.0.61_375.26_linux.run
+ 1606  ls
+ 1607  rm -rf cuda_8.0.61_375.26_linux.run 
+ 1608  wget https://developer.download.nvidia.com/compute/cuda/8.0/secure/Production/8.0.61/cudnn/v7.0/cuda_8.0.61_375.26_linux.run
+ 1609  ./cuda_8.0.61_375.26_linux.run
+ 1610  chmod +x cuda_8.0.61_375.26_linux.run
+ 1611  ./cuda_8.0.61_375.26_linux.run
+ 1612  ./tf_grouping_compile.sh 
+ 1613  /usr/local/cuda-12/bin/nvcc -o ./tf_grouping_g.cu.o ./tf_grouping_g.cu -DGOOGLE_CUDA=1 -Xcompiler -fPIC
+ 1614  /usr/local/cuda-12/bin/nvcc -o ./tf_grouping_g.cu.o ./tf_grouping_g.cu  -c -O2 -DGOOGLE_CUDA=1 -x cu -Xcompiler ‘-fPIC’
+ 1615  /usr/local/cuda-12/bin/nvcc -o ./tf_grouping_g.cu.o ./tf_grouping_g.cu  -c -O2 -DGOOGLE_CUDA=1 -x cu -Xcompiler -fPIC
+ 1616  ls
+ 1617  ./tf_grouping_compile.sh 
+ 1618  ls
+ 1619  cd ../sampling/
+ 1620  ls
+ 1621  /usr/local/cuda-12/bin/nvcc  tf_sampling_g.cu -o tf_sampling_g.cu.o -c -O2 -DGOOGLE_CUDA=1 -x cu -Xcompiler -fPIC
+ 1622  chmod +x ./tf_sampling_compile.sh 
+ 1623  ./tf_sampling_compile.sh 
+ 1624  cd ../grouping/
+ 1625  ./tf_grouping_compile.sh 
+ 1626  cd
+ 1627  ls
+ 1628  git clone https://github.com/yanx27/Pointnet_Pointnet2_pytorch.git
+ 1629  conda activate chinmay-thesis
+ 1630  conda list
+ 1631  nvidia-smi
+ 1632  nvidia-smi
+ 1633  conda activate chinmay-thesis
+ 1634  pip install pandas openpyxl
+ 1635  echo TF_INC
+ 1636  echo $TF_INC
+ 1637  TF_LIB=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
+ 1638  cd pointnet2/tf_ops/
+ 1639  ls
+ 1640  cd 3d_interpolation/
+ 1641  ls
+ 1642  chmod +x tf_interpolate_compile.sh
+ 1643  ./tf_interpolate_compile.sh
+ 1644  conda activate chinmay-thesis
+ 1645  cd models/
+ 1646  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1647  cd ..
+ 1648  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1649  conda deactivat
+ 1650  conda deactivate
+ 1651  conda env remove --name pointnet2
+ 1652  conda list
+ 1653  conda info --envs
+ 1654  conda create -n pointnet python=3.7
+ 1655  conda activate pointnet
+ 1656  conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch
+ 1657  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1658  ls /usr/local/cuda/lib64/libcurand.so.10
+ 1659  cat ~/bashrcs
+ 1660  cat ~/.bashrc
+ 1661  cd ~
+ 1662  pwd
+ 1663  source ~/.bashrc
+ 1664  echo $PATH
+ 1665  conda activate pointnet
+ 1666  cd Pointnet_Pointnet2_pytorch/
+ 1667  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1668  pip install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch
+ 1669  pip install torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f 
+ 1670  pip install torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+ 1671  conda deactivate
+ 1672  conda env remove --name pointnet
+ 1673  conda create -n pointnet python=3.7
+ 1674  conda activate pointnet
+ 1675  pip install torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+ 1676  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1677  pip install tqdm
+ 1678  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1679  pip install  cudatoolkit=10.1 -c pytorch
+ 1680  pip install  cudatoolkit=10.1 
+ 1681  pip install  cudatoolkit==10.1 
+ 1682  wget https://developer.download.nvidia.com/compute/cuda/10.1/secure/local_installers/cuda_10.1.243_418.87.00_linux.run
+ 1683  [200~To install CUDA 10.1 on your system, you will need to follow the steps specific to your operating system (e.g., Ubuntu, Windows). Below are the instructions for installing CUDA 10.1 on **Ubuntu** and **Windows**.
+ 1684  ### **Installing CUDA 10.1 on Ubuntu**
+ 1685  #### 1. **Uninstall Previous Versions of CUDA (Optional)**
+ 1686  If you have an older version of CUDA installed, you may want to remove it first. To uninstall CUDA:
+ 1687  ```bash
+ 1688  sudo apt-get --purge remove "*cuda*"
+ 1689  sudo apt-get --purge remove "*nvidia*"
+ 1690  sudo apt-get autoremove
+ 1691  ```
+ 1692  For a custom installation, you can also download the NVIDIA driver from the [NVIDIA driver downloads page](https://www.nvidia.com/Download/index.aspx).
+ 1693  ---
+ 1694  ### **Installing CUDA 10.1 on Windows**
+ 1695  #### 1. **Download CUDA Toolkit**
+ 1696  Go to the [CUDA 10.1 download page](https://developer.nvidia.com/cuda-10.1-download-archive) and choose your operating system (Windows) and version (e.g., Windows 10).
+ 1697  Select the **exe (local)** installer type for CUDA 10.1.
+ 1698  #### 2. **Run the Installer**
+ 1699  Once the installer is downloaded, run the `.exe` file to start the installation process. Follow these steps:
+ 1700  - Choose **Custom** installation if you want to change installation paths and select components.
+ 1701  - Choose **Express** if you want the default installation options.
+ 1702  - Ensure that **CUDA Toolkit**, **CUDA Samples**, and **Driver** are selected.
+ 1703  #### 3. **Set the Environment Variables**
+ 1704  After installation, set the necessary environment variables in **System Properties** to ensure your system can find CUDA:
+ 1705  - Right-click on "This PC" or "My Computer" → **Properties** → **Advanced system settings** → **Environment Variables**.
+ 1706  - Under **System Variables**, click **New** to add the following variables:
+ 1707  #### 4. **Install NVIDIA Driver (If Needed)**
+ 1708  Ensure your NVIDIA driver is compatible with CUDA 10.1. The CUDA 10.1 toolkit requires at least NVIDIA driver version **418.87**.
+ 1709  - You can download the NVIDIA driver from the [NVIDIA website](https://www.nvidia.com/Download/index.aspx).
+ 1710  - Follow the installation instructions provided by NVIDIA.
+ 1711  #### 5. **Verify Installation**
+ 1712  After the installation is complete, open the **Command Prompt** and run the following command to verify the installation:
+ 1713  ```cmd
+ 1714  nvcc --version
+ 1715  ```
+ 1716  This should display the CUDA version installed (CUDA 10.1).
+ 1717  #### 6. **Install cuDNN (Optional)**
+ 1718  If you need cuDNN (which is recommended for deep learning), you can download it from [NVIDIA's cuDNN download page](https://developer.nvidia.com/cudnn). Ensure that you select the correct version that matches CUDA 10.1.
+ 1719  Once downloaded, follow the instructions in the cuDNN installation guide to copy the cuDNN files into the appropriate directories under the CUDA folder.
+ 1720  ---
+ 1721  ### **Troubleshooting Tips**
+ 1722  - If you encounter issues with the driver or CUDA not being recognized, make sure you have rebooted your machine after installation.
+ 1723  - If you're using a virtual environment (e.g., conda), ensure that you install the CUDA dependencies within that environment.
+ 1724  - Ensure that your GPU is supported by CUDA 10.1 by checking the [CUDA GPUs list](https://developer.nvidia.com/cuda-gpus).
+ 1725  ---
+ 1726  sudo bash cuda_10.1.243_418.87.00_linux.run
+ 1727  bash cuda_10.1.243_418.87.00_linux.run
+ 1728  conda activate chinmay-thesis
+ 1729  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1730  This command should display the version of CUDA installed (e.g., CUDA 10.1).
+ 1731  #### 6. **Install NVIDIA Driver (If Needed)**
+ 1732  Ensure that you have the correct NVIDIA driver installed for your GPU. If you don’t have it installed, you can install the driver via `apt`:
+ 1733  ```bash
+ 1734  sudo apt-get install nvidia-driver-418
+ 1735  ```
+ 1736  This sets up the correct paths for CUDA 10.1 to be recognized by your system.
+ 1737  #### 5. **Verify Installation**
+ 1738  After installing CUDA 10.1, reboot your system and verify the installation:
+ 1739  ```bash
+ 1740  nvcc --version
+ 1741  ```
+ 1742  #### 4. **Update `.bashrc` File**
+ 1743  After the installation completes, add the following to your `.bashrc` to set the environment variables:
+ 1744  ```bash
+ 1745  echo 'export PATH=/usr/local/cuda-10.1/bin:$PATH' >> ~/.bashrc
+ 1746  echo 'export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+ 1747  source ~/.bashrc
+ 1748  ```
+ 1749  - **Via Package Manager:**
+ 1750  #### 3. **Download CUDA 10.1 Toolkit**
+ 1751  Go to the [CUDA 10.1 download page](https://developer.nvidia.com/cuda-10.1-download-archive) and select your operating system (e.g., Linux -> Ubuntu -> version number). You will have the option to choose the installation method.
+ 1752  - **Via `.run` file:**
+ 1753  #### 2. **Install Dependencies**
+ 1754  Ensure that you have all required dependencies:
+ 1755  ```bash
+ 1756  sudo apt update
+ 1757  sudo apt install build-essential gcc g++ make
+ 1758  sudo apt install dkms
+ 1759  sudo apt install freeglut3 freeglut3-dev
+ 1760  sudo apt install libxi6 libxi-dev
+ 1761  sudo apt install libxmu6 libxmu-dev
+ 1762  ```
+ 1763  /bin/python3 /home/student/Pointnet_Pointnet2_pytorch/data_utils/visualise_crop.py
+ 1764  conda activate chinmay-thesis
+ 1765  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1766  python test_semseg.py --log_dir pointnet2_sem_seg --test_area 5 --visual
+ 1767  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1768  cd data/shapenetcore_partanno_segmentation_benchmark_v0_normal/
+ 1769  pwd
+ 1770  cd ../..
+ 1771  cd data_utils/
+ 1772  python txt_to_ply.py 
+ 1773  python visualise_crop.py 
+ 1774  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1775  cd ..
+ 1776  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1777  ls
+ 1778  cd log/part_seg/pointnet2_part_seg_msg/checkpoints/
+ 1779  ls
+ 1780  pwd
+ 1781  cd 
+ 1782  ls
+ 1783  pwd
+ 1784  cd Pointnet_Pointnet2_pytorch/
+ 1785  python pretained_part_seg.py 
+ 1786  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1787  python pretained_part_seg.py 
+ 1788  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1789  python pretained_part_seg.py 
+ 1790  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1791  python pretained_part_seg.py 
+ 1792  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1793  python pretained_part_seg.py 
+ 1794  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1795  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/get_pcd.py
+ 1796  /bin/python3.10 /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1797  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/ConceptGraph/sceneGraph3D/utils_chinmay/get_pcd.py
+ 1798  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/get_pcd.py
+ 1799  python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1800  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/get_pcd.py
+ 1801  cd
+ 1802  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/get_pcd.py
+ 1803  ls shape_data/
+ 1804  ls
+ 1805  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/get_pcd.py
+ 1806  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/Pointnet_Pointnet2_pytorch/data_utils/formatdata.py
+ 1807  /usr/bin/python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1808  python train_partseg.py --model pointnet2_part_seg_msg  --log_dir pointnet2_part_seg_msg
+ 1809  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/Pointnet_Pointnet2_pytorch/test_partseg.py
+ 1810  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1811  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1812  cd data
+ 1813  ls
+ 1814  cd shapenetcore_partanno_segmentation_benchmark_v0_normal/
+ 1815  ls
+ 1816  cd 20/
+ 1817  ls
+ 1818  pwd
+ 1819  cat ff210045-439e-4d69-a3db-0ff481995646.txt
+ 1820  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/Pointnet_Pointnet2_pytorch/data_utils/formatdata.py
+ 1821  cd ../../..
+ 1822  python train_partseg.py --model pointnet2_part_seg_msg --normal --log_dir pointnet2_part_seg_msg
+ 1823  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1824  python pretained_part_seg.py --normal --log_dir pointnet2_part_seg_msg
+ 1825  /home/student/anaconda3/envs/chinmay-thesis/bin/python /home/student/Pointnet_Pointnet2_pytorch/data_utils/visualise_crop.py
+ 1826  ~
+ 1827  python pretained_part_seg.py --normal --log_dir pointnet2_part_seg_msg
+ 1828  python test_partseg.py --normal --log_dir pointnet2_part_seg_msg
+ 1829  python pretained_part_seg.py --normal --log_dir pointnet2_part_seg_msg
+ 1830  python train_partseg.py --model pointnet2_part_seg_msg --log_dir pointnet2_part_seg_msg
+ 1831  python pretained_part_seg.py --normal --log_dir pointnet2_part_seg_msg
+ 1832  python pretained_part_seg.py --log_dir pointnet2_part_seg_msg
+ 1833  python test_partseg.py --log_dir pointnet2_part_seg_msg
+ 1834  git lfs install
+ 1835  apt install git-lfs
+ 1836  sudo apt install git-lfs
+ 1837  git lfs install
+ 1838  git clone https://huggingface.co/datasets/labelmaker/arkit_labelmaker
+ 1839  git status
+ 1840  /bin/python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1841  python /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/printEnvVariablesToFile.py /home/student/.vscode/extensions/ms-python.python-2024.20.0-linux-x64/python_files/deactivate/bash/envVars.txt
+ 1842  git status
+ 1843  cd sceneGraph3D/
+ 1844  git status
+ 1845  git stash
+ 1846  git stash pop
+ 1847  cd Pointnet_Pointnet2_pytorch/
+ 1848  cd data
+ 1849  ls
+ 1850  pwd
+ 1851  cat /home/student/Pointnet_Pointnet2_pytorch/data/421602/06c298b1-b45a-4da4-ba14-95beabb02509.txt
+ 1852  cd
+ 1853  ls
+ 1854  mkdir data_final
+ 1855  ls
+ 1856  cd /home
+ 1857  ls
+ 1858  cd
+ 1859  ls
+ 1860  rsync --partial --progress -e ssh ./ConceptGraph/ chinmayn@129.69.223.226:/home/chinmayn
+ 1861  rsync -avz --partial --progress -e ssh ./ConceptGraph/ chinmayn@129.69.223.226:/home/chinmayn/
+ 1862  cd ConceptGraph/
+ 1863  ls
+ 1864  du -sb .
+ 1865  du -s .
+ 1866  su -sm .
+ 1867  du -sm .
+ 1868  cd sceneGraph3D/
+ 1869  git statuis
+ 1870  git status
+ 1871  conda activate myenv
+ 1872  conda activate chinmay-thesis
+ 1873  lsb_release -a
+ 1874  conda env export > environment.yml
+ 1875  ls
+ 1876  rsync -avz --partial --progress -e ssh ./environment.yml  chinmayn@129.69.223.226:/home/chinmayn/
+ 1877  nvidia-smi
+ 1878  conda env list
+ 1879  rsync -avz --partial --progress -e ssh /home/student/anaconda3/ chinmayn@129.69.223.226:/home/chinmayn/anacondaaa/
+ 1880  cd 
+ 1881  cd anaconda3/
+ 1882  du -sm .
+ 1883  rsync -avz --partial --progress -e ssh /home/student/move/ chinmayn@129.69.223.226:/home/chinmayn/old_files/
+ 1884  historz
+ 1885  history
+ 1886  history > historypointnet.txt

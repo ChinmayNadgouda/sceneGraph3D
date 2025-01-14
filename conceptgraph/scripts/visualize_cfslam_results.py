@@ -20,8 +20,41 @@ import open3d as o3d
 import torch
 import torch.nn.functional as F
 import open_clip
-
+import hydra
+from conceptgraph.dataset.datasets_common import get_dataset
+from pathlib import Path
+from PIL import Image
+from conceptgraph.Mask3D.eval import main as mask3d_main
 import distinctipy
+
+from hydra.experimental import initialize, compose
+initialize(config_path="../Mask3D/conf", job_name="test_app")  # Initialize Hydra
+cfg = compose(config_name="config_base_instance_segmentation.yaml")  # Load the Hydra configuration
+from omegaconf import DictConfig
+from ultralytics import YOLO, SAM
+import supervision as sv
+from conceptgraph.utils.general_utils import (
+    ObjectClasses,
+    make_vlm_edges_and_captions, 
+)
+from conceptgraph.utils.general_utils import get_vis_out_path, cfg_to_dict, check_run_detections
+from conceptgraph.slam.utils import (
+    filter_gobs,
+    filter_objects,
+    get_bounding_box,
+    init_process_pcd,
+    make_detection_list_from_pcd_and_gobs,
+    denoise_objects,
+    merge_objects, 
+    detections_to_obj_pcd_and_bbox,
+    prepare_objects_save_vis,
+    process_cfg,
+    process_edges,
+    process_pcd,
+    processing_needed,
+    resize_gobs
+)
+from conceptgraph.utils.ious import mask_subtract_contained
 
 # from conceptgraph.utils.pointclouds import Pointclouds
 from conceptgraph.utils.pointclouds import Pointclouds
@@ -30,6 +63,9 @@ from conceptgraph.slam.slam_classes import MapObjectList
 from conceptgraph.utils.vis import LineMesh
 from conceptgraph.slam.utils import filter_objects, merge_objects
 
+@hydra.main(config_path="../hydra_configs/", config_name="rerun_realtime_mapping")
+def get_config(cfg: DictConfig):
+    return cfg
 def create_ball_mesh(center, radius, color=(0, 1, 0)):
     """
     Create a colored mesh sphere.
@@ -149,7 +185,7 @@ def main(args):
     
     if not args.no_clip:
         print("Initializing CLIP model...")
-        clip_model, _, clip_preprocess = open_clip.create_model_and_transforms("ViT-H-14", "laion2b_s32b_b79k")
+        clip_model, _, clip_preprocess = open_clip.create_model_and_transforms("ViT-B-32", "laion400m_e31")
         clip_model = clip_model.to("cuda")
         clip_tokenizer = open_clip.get_tokenizer("ViT-H-14")
         print("Done initializing CLIP model.")
@@ -303,6 +339,173 @@ def main(args):
         similarity_colors = cmap(normalized_similarities.detach().cpu().numpy())[..., :3]
 
         max_prob_object = objects[max_prob_idx]
+        
+        # Estimate normals
+        # Sending most probable object to mask3d
+        pcd_to_eval = max_prob_object['pcd']
+        pcd_to_eval.estimate_normals(
+            search_param=o3d.geometry.KDTreeSearchParamHybrid(
+                radius=0.1,  # Search radius
+                max_nn=30    # Maximum nearest neighbors
+            )
+        )
+        mask3d_main(cfg, np.asarray(pcd_to_eval.points), np.asarray(pcd_to_eval.colors),  np.asarray(pcd_to_eval.normals))
+        # count_img = 0
+        # dataset = get_dataset(
+        #         dataconfig='/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/dataset/dataconfigs/replica/replica.yaml',
+        #         start=0,
+        #         end=-1,
+        #         stride=10,
+        #         basedir='/home/gokul/ConceptGraphs/datasets/Replica',
+        #         sequence='room0',
+        #         desired_height=680,
+        #         desired_width=1200,
+        #         device="cpu",
+        #         dtype=torch.float,
+        #     )
+        # for img in max_prob_object['image_idx']:
+        #     frame_idx = img
+        #     scene_iddd = 'room0'
+            
+        #     color_path = Path(dataset.color_paths[frame_idx])
+        #     depth_path = Path(dataset.depth_paths[frame_idx])
+        #     image_original_pil = Image.open(color_path)
+        #     # color and depth tensors, and camera instrinsics matrix
+        #     color_tensor, depth_tensor, intrinsics, *_ = dataset[frame_idx]
+        #     # Covert to numpy and do some sanity checks
+        #     depth_tensor = depth_tensor[..., 0]
+        #     depth_array = depth_tensor.cpu().numpy()
+        #     color_np = color_tensor.cpu().numpy() # (H, W, 3)
+        #     image_rgb = (color_np).astype(np.uint8) # (H, W, 3)
+        #     assert image_rgb.max() > 1, "Image is not in range [0, 255]"
+
+        #     color_path = str(max_prob_object['color_path'][count_img])
+        #     count_img += 1
+        #     color_path = color_path.replace('student','gokul')
+        #     color_path = color_path.replace('ConceptGraph','ConceptGraphs')
+        #     #print(max_prob_object)
+        #     #cfg = get_config()
+        #     #cfg = process_cfg(cfg)
+        #     obj_classes = ObjectClasses(
+        #     classes_file_path='classes.txt', 
+        #     bg_classes=["wall", "floor", "ceiling"], 
+        #     skip_bg=True
+        #     )
+        #     detection_model = YOLO('yolov8l-world.pt')
+        #     sam_predictor = SAM('mobile_sam.pt') # UltraLytics SAM
+        #     detection_model.set_classes(obj_classes.get_classes_arr())
+        #     results = detection_model.predict(color_path, conf=0.1, verbose=False)
+        #     print(results[0].boxes.cls)
+        #     confidences = results[0].boxes.conf.cpu().numpy()
+        #     detection_class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
+        #     detection_class_labels = [f"{obj_classes.get_classes_arr()[class_id]} {class_idx}" for class_idx, class_id in enumerate(detection_class_ids)]
+        #     xyxy_tensor = results[0].boxes.xyxy
+        #     xyxy_np = xyxy_tensor.cpu().numpy()
+        #     j=0
+        #     print(detection_class_ids)
+        #     for part in detection_class_labels:
+        #         print(part)
+        #         x,y,x1,y1 = map(float,xyxy_np[j])
+        #         print(x, y, x1, y1)
+        #         print(xyxy_np[j])
+        #         # cropped_img2 = pil_image.crop((x, y, x1, y1))
+        #         # cropped_image2 = cv2.cvtColor(np.array(cropped_img2), cv2.COLOR_RGB2BGR)
+        #         # cv2.imshow("cropped", cropped_image2)
+        #         # cv2.imwrite("/home/gokul/imgess/tryCI_pilchin2"+str(i)+str(j)+".jpg", cropped_image2)
+        #         # print("/home/gokul/CI"+str(i)+".jpg")
+        #         j+=1
+        #     if xyxy_tensor.numel() != 0:
+        #             sam_out = sam_predictor.predict(color_path, bboxes=xyxy_tensor, verbose=False)
+        #             masks_tensor = sam_out[0].masks.data
+
+        #             masks_np = masks_tensor.cpu().numpy()
+        #     else:
+        #         masks_np = np.empty((0, *color_tensor.shape[:2]), dtype=np.float64)
+
+        #     curr_det = sv.Detections(
+        #             xyxy=xyxy_np,
+        #             confidence=confidences,
+        #             class_id=detection_class_ids,
+        #             mask=masks_np,
+        #         )
+        #     print(curr_det)
+        # # Make the edges
+        # labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, False, (None,None), depth_path)
+
+        # image_crops, image_feats, text_feats = compute_clip_features_batched(
+        #     image_rgb, curr_det, clip_model, clip_preprocess, clip_tokenizer, obj_classes.get_classes_arr(), 'cuda')
+
+        # # increment total object detections
+
+        # # Save results
+        # # Convert the detections to a dict. The elements are in np.array
+        # results = {
+        #     # add new uuid for each detection 
+        #     "xyxy": curr_det.xyxy,
+        #     "confidence": curr_det.confidence,
+        #     "class_id": curr_det.class_id,
+        #     "mask": curr_det.mask,
+        #     "classes": obj_classes.get_classes_arr(),
+        #     "image_crops": image_crops,
+        #     "image_feats": image_feats,
+        #     "text_feats": text_feats,
+        #     "detection_class_labels": detection_class_labels,
+        #     "labels": labels,
+        #     "edges": edges,
+        #     "captions": captions,
+        # }
+        # raw_gobs = results
+        # # get pose, this is the untrasformed pose.
+        # unt_pose = dataset.poses[frame_idx]
+        # unt_pose = unt_pose.cpu().numpy()
+
+        # # Don't apply any transformation otherwise
+        # adjusted_pose = unt_pose
+
+        # # resize the observation if needed
+        # resized_gobs = resize_gobs(raw_gobs, image_rgb)
+        # # filter the observations
+        # filtered_gobs = filter_gobs(resized_gobs, image_rgb, 
+        #     skip_bg=True,
+        #     BG_CLASSES=['wall'],
+        #     mask_area_threshold=25,
+        #     max_bbox_area_ratio=0.5,
+        #     mask_conf_threshold=0.25,
+        # )
+
+        # gobs = filtered_gobs
+
+        # if len(gobs['mask']) == 0: # no detections in this frame
+        #     print('No detectionsss')
+
+        # # this helps make sure things like pillows on couches are separate objects
+        # gobs['mask'] = mask_subtract_contained(gobs['xyxy'], gobs['mask'])
+
+        # obj_pcds_and_bboxes = detections_to_obj_pcd_and_bbox(
+        #     depth_array=depth_array,
+        #     masks=gobs['mask'],
+        #     cam_K=intrinsics.cpu().numpy()[:3, :3],  # Camera intrinsics
+        #     image_rgb=image_rgb,
+        #     trans_pose=adjusted_pose,
+        #     min_points_threshold=cfg.min_points_threshold,
+        #     spatial_sim_type=cfg.spatial_sim_type,
+        #     obj_pcd_max_points=cfg.obj_pcd_max_points,
+        #     device='cuda',
+        # )
+
+        # for obj in obj_pcds_and_bboxes:
+        #     if obj:
+        #         obj["pcd"] = init_process_pcd(
+        #             pcd=obj["pcd"],
+        #             downsample_voxel_size=cfg["downsample_voxel_size"],
+        #             dbscan_remove_noise=cfg["dbscan_remove_noise"],
+        #             dbscan_eps=cfg["dbscan_eps"],
+        #             dbscan_min_points=cfg["dbscan_min_points"],
+        #         )
+        #         obj["bbox"] = get_bounding_box(
+        #             spatial_sim_type=cfg['spatial_sim_type'], 
+        #             pcd=obj["pcd"],
+        #         )
         print(f"Most probable object is at index {max_prob_idx} with class name '{max_prob_object['class_name']}'")
         print(f"location xyz: {max_prob_object['bbox'].center}")
         

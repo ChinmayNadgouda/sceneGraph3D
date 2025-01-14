@@ -1000,7 +1000,7 @@ class SceneFun3D(GradSLAMDataset):
 
     def get_intrinsics_SF3D(self, index):
         #file = open(self.input_folder + "/lowres_wide_intrinsics/" + index + ".pincam", 'r')
-        file = open(self.input_folder + "/wide_intrinsics/" + index + ".pincam", 'r')
+        file = open(self.input_folder + "/hires_wide_intrinsics/" + index + ".pincam", 'r')
 
         values = file.readline().split()
 
@@ -1018,8 +1018,8 @@ class SceneFun3D(GradSLAMDataset):
             glob.glob(os.path.join(f"{self.input_folder}/{depth_folder}/*.png"))
         )
 
-        color_paths = natsorted(glob.glob(f"{self.input_folder}/wide/*.png"))
-        depth_paths = natsorted(glob.glob(f"{self.input_folder}/highres_depth/*.png"))
+        color_paths = natsorted(glob.glob(f"{self.input_folder}/hires_wide/*.jpg"))
+        depth_paths = natsorted(glob.glob(f"{self.input_folder}/hires_depth/*.png"))
 
         embedding_paths = None
         if self.load_embeddings:
@@ -1036,9 +1036,9 @@ class SceneFun3D(GradSLAMDataset):
         traj = dataParser.get_camera_trajectory(visit_id, video_id)
         for path in self.color_paths:
             folders = path.split('/')
-            time_stamp = folders[-1].split('_')[-1].replace('.png','')
+            time_stamp = folders[-1].split('_')[-1].replace('.jpg','')
             pose = dataParser.get_nearest_pose(time_stamp,traj)
-            print(time_stamp)
+            print(pose)
             poses.append(torch.from_numpy(np.array(pose)).float())
 
         return poses
@@ -1080,7 +1080,7 @@ class SIRDataset(GradSLAMDataset):
         )
 
     def get_filepaths(self):
-        color_paths = natsorted(glob.glob(f"{self.input_folder}/color/*.png"))
+        color_paths = natsorted(glob.glob(f"{self.input_folder}/color/*.jpg"))
         depth_paths = natsorted(glob.glob(f"{self.input_folder}/depth/*.png"))
 
         embedding_paths = None
@@ -1089,7 +1089,20 @@ class SIRDataset(GradSLAMDataset):
                 glob.glob(f"{self.input_folder}/{self.embedding_dir}/*.pt")
             )
         return color_paths, depth_paths, embedding_paths
+    def load_poses(self):
+        poses = []
+        with open(self.pose_path, "r") as f:
+            lines = f.readlines()
+        for i in range(self.num_imgs):
+            line = lines[i]
+            c2w = np.array(list(map(float, line.split()))).reshape(4, 4)
+            #c2w[:3, 1] *= -1
+            #c2w[:3, 2] *= -1
+            c2w = torch.from_numpy(c2w).float()
+            poses.append(c2w)
+        return poses
 
+    """        
     def load_poses(self):
         poses = []
         color_paths_new = []
@@ -1115,7 +1128,7 @@ class SIRDataset(GradSLAMDataset):
         self.num_imgs = len(color_paths_new)
             
         return poses
-    
+    """
     """
     def load_poses(self):
         poses = []

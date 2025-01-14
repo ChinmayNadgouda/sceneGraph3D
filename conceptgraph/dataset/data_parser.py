@@ -185,7 +185,7 @@ class DataParser:
         Returns:
             (dict): A dictionary where keys are timestamps (rounded to 3 decimal places) and values are 4x4 transformation matrices representing camera poses.
         """
-        traj_file = os.path.join(self.data_root_path, visit_id, video_id, "lowres_wide.traj")
+        traj_file = os.path.join(self.data_root_path, visit_id, video_id, "hires_poses.traj")
         with open(traj_file) as f:
             traj = f.readlines()
 
