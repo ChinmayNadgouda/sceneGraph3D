@@ -342,155 +342,174 @@ directory_name = {
 }
 annot_visit_map = {}
 part_metadata = {}
-train_dict, test_dict, val_dict = get_train_test_val_dict('/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/train_test_split/')
-folder_path = '/home/student/dev'
-text_files_home = '/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/'
-count = 0
-for root, dirs, files in os.walk(folder_path):
-        if len(dirs) > 2:
-            for dir in dirs:
-                if dir.startswith('4'):
-                    json_file_path = root+'/'+dir+'/'+dir+'_annotations.json'
-                    with open(json_file_path, 'r') as file:
-                         data = json.load(file)
+train_dict, test_dict, val_dict = get_train_test_val_dict('/home/gokul/train_test_split/')
+# folder_path = '/home/student/dev'
+# text_files_home = '/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/'
+# count = 0
+# for root, dirs, files in os.walk(folder_path):
+#         if len(dirs) > 2:
+#             for dir in dirs:
+#                 if dir.startswith('4'):
+#                     json_file_path = root+'/'+dir+'/'+dir+'_annotations.json'
+#                     with open(json_file_path, 'r') as file:
+#                          data = json.load(file)
                     
-                    annotations = data['annotations']
-                    for annotation in annotations:
-                        if(annotation['label'] in directory_name):
-                            if os.path.exists(text_files_home+'meta_data/'+annotation['label']+'/'+annotation['annot_id']+'.json'):
-                                annot_visit_map[annotation['annot_id']] = dir
-train_path = '/home/student/Mask3D_SIR/Train/'
-train_path2 = './data/processed/scannet2/train/'
-test_path = '/home/student/Mask3D_SIR/Test/'
-val_path = '/home/student/Mask3D_SIR/Val/'
-instance_path = '/home/student/Mask3D_SIR/instance_gt/'
-instance_path2 = './data/processed/scannet2/instance_gt/train/'
-def get_train_database(train_dict, annot_visit_map):
-    count = 0
-    yaml_data = []
-    for train_id in train_dict:
-        id = train_id.split('/')[-1].replace('.txt','')
-        color_mean, color_std, length, label = calculate_color_stats_len(train_path+f"{id}.npy")
-        scene = annot_visit_map[id]
-        entry = {
-            "color_mean": color_mean,
-            "color_std": color_std,
-            "file_len": length,  # Example length, replace with actual if needed
-            "filepath": train_path2+f"{id}.npy",
-            "instance_gt_filepath": instance_path2+f"train/{id}.txt",
-            "raw_description_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}.txt",
-            "raw_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.ply",
-            "raw_instance_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean.aggregation.json",
-            "raw_label_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.labels.ply",
-            "raw_segmentation_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.0.010000.segs.json",
-            "scene": scene,
-            "scene_type": int(label),
-            "sub_scene": scene,
-        }
-        yaml_data.append(entry)
-    with open('/home/student/Mask3D_SIR/train_database.yaml', 'w') as file:
-        yaml.dump(yaml_data, file, default_flow_style=False)
-    with open('/home/student/Mask3D_SIR/train_validation_database.yaml', 'w') as file:
-        yaml.dump(yaml_data, file, default_flow_style=False)
-def get_test_database(test_dict, annot_visit_map):
-    count = 0
-    yaml_data = []
-    for train_id in test_dict:
-        id = train_id.split('/')[-1].replace('.txt','')
-        color_mean, color_std, length, label = calculate_color_stats_len(test_path+f"{id}.npy")
-        scene = annot_visit_map[id]
-        entry = {
-            "file_len": length,  # Example length, replace with actual if needed
-            "filepath": test_path+f"{id}.npy",
-            "raw_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.ply",
-            "scene": scene,
-            "sub_scene": scene,
-        }
-        yaml_data.append(entry)
-    with open('/home/student/Mask3D_SIR/test_database.yaml', 'w') as file:
-        yaml.dump(yaml_data, file, default_flow_style=False)
-def get_val_database(val_dict, annot_visit_map):
-    count = 0
-    yaml_data = []
-    for train_id in val_dict:
-        id = train_id.split('/')[-1].replace('.txt','')
-        color_mean, color_std, length, label = calculate_color_stats_len(val_path+f"{id}.npy")
-        scene = annot_visit_map[id]
-        entry = {
-            "color_mean": color_mean,
-            "color_std": color_std,
-            "file_len": length,  # Example length, replace with actual if needed
-            "filepath": val_path+f"{id}.npy",
-            "instance_gt_filepath": instance_path+f"validation/{id}.txt",
-            "raw_description_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}.txt",
-            "raw_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.ply",
-            "raw_instance_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean.aggregation.json",
-            "raw_label_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.labels.ply",
-            "raw_segmentation_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.0.010000.segs.json",
-            "scene": scene,
-            "scene_type": int(label),
-            "sub_scene": scene,
-        }
-        yaml_data.append(entry)
-    with open('/home/student/Mask3D_SIR/validation_database.yaml', 'w') as file:
-        yaml.dump(yaml_data, file, default_flow_style=False)
-    with open('/home/student/Mask3D_SIR/train_validation_database.yaml', 'a') as file:
-        yaml.dump(yaml_data, file, default_flow_style=False)
+#                     annotations = data['annotations']
+#                     for annotation in annotations:
+#                         if(annotation['label'] in directory_name):
+#                             if os.path.exists(text_files_home+'meta_data/'+annotation['label']+'/'+annotation['annot_id']+'.json'):
+#                                 annot_visit_map[annotation['annot_id']] = dir
+# train_path = '/home/student/Mask3D_SIR/Train/'
+# train_path2 = './data/processed/scannet2/train/'
+# test_path = '/home/student/Mask3D_SIR/Test/'
+# val_path = '/home/student/Mask3D_SIR/Val/'
+# instance_path = '/home/student/Mask3D_SIR/instance_gt/'
+# instance_path2 = './data/processed/scannet2/instance_gt/train/'
+instance_path = '/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/Mask3D/data/processed/scannet200/instance_gt/'
+# def get_train_database(train_dict, annot_visit_map):
+#     count = 0
+#     yaml_data = []
+#     for train_id in train_dict:
+#         id = train_id.split('/')[-1].replace('.txt','')
+#         color_mean, color_std, length, label = calculate_color_stats_len(train_path+f"{id}.npy")
+#         scene = annot_visit_map[id]
+#         entry = {
+#             "color_mean": color_mean,
+#             "color_std": color_std,
+#             "file_len": length,  # Example length, replace with actual if needed
+#             "filepath": train_path2+f"{id}.npy",
+#             "instance_gt_filepath": instance_path2+f"train/{id}.txt",
+#             "raw_description_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}.txt",
+#             "raw_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.ply",
+#             "raw_instance_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean.aggregation.json",
+#             "raw_label_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.labels.ply",
+#             "raw_segmentation_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.0.010000.segs.json",
+#             "scene": scene,
+#             "scene_type": int(label),
+#             "sub_scene": scene,
+#         }
+#         yaml_data.append(entry)
+#     with open('/home/student/Mask3D_SIR/train_database.yaml', 'w') as file:
+#         yaml.dump(yaml_data, file, default_flow_style=False)
+#     with open('/home/student/Mask3D_SIR/train_validation_database.yaml', 'w') as file:
+#         yaml.dump(yaml_data, file, default_flow_style=False)
+# def get_test_database(test_dict, annot_visit_map):
+#     count = 0
+#     yaml_data = []
+#     for train_id in test_dict:
+#         id = train_id.split('/')[-1].replace('.txt','')
+#         color_mean, color_std, length, label = calculate_color_stats_len(test_path+f"{id}.npy")
+#         scene = annot_visit_map[id]
+#         entry = {
+#             "file_len": length,  # Example length, replace with actual if needed
+#             "filepath": test_path+f"{id}.npy",
+#             "raw_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.ply",
+#             "scene": scene,
+#             "sub_scene": scene,
+#         }
+#         yaml_data.append(entry)
+#     with open('/home/student/Mask3D_SIR/test_database.yaml', 'w') as file:
+#         yaml.dump(yaml_data, file, default_flow_style=False)
+# def get_val_database(val_dict, annot_visit_map):
+#     count = 0
+#     yaml_data = []
+#     for train_id in val_dict:
+#         id = train_id.split('/')[-1].replace('.txt','')
+#         color_mean, color_std, length, label = calculate_color_stats_len(val_path+f"{id}.npy")
+#         scene = annot_visit_map[id]
+#         entry = {
+#             "color_mean": color_mean,
+#             "color_std": color_std,
+#             "file_len": length,  # Example length, replace with actual if needed
+#             "filepath": val_path+f"{id}.npy",
+#             "instance_gt_filepath": instance_path+f"validation/{id}.txt",
+#             "raw_description_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}.txt",
+#             "raw_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.ply",
+#             "raw_instance_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean.aggregation.json",
+#             "raw_label_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.labels.ply",
+#             "raw_segmentation_filepath": f"data/raw/scannet/scannet/scans/scene{id}/scene{id}_vh_clean_2.0.010000.segs.json",
+#             "scene": scene,
+#             "scene_type": int(label),
+#             "sub_scene": scene,
+#         }
+#         yaml_data.append(entry)
+#     with open('/home/student/Mask3D_SIR/validation_database.yaml', 'w') as file:
+#         yaml.dump(yaml_data, file, default_flow_style=False)
+#     with open('/home/student/Mask3D_SIR/train_validation_database.yaml', 'a') as file:
+#         yaml.dump(yaml_data, file, default_flow_style=False)
 
-def get_mean_std_colors(train_dict,annot_visit_map):
-    count = 0
-    yaml_data = []
-    color_means = []
-    color_stds = []
-    for train_id in train_dict:
-        id = train_id.split('/')[-1].replace('.txt','')
-        color_mean, color_std, length, label = calculate_color_stats_len(train_path+f"{id}.npy")
-        color_means.append(color_mean)
-        color_stds.append(color_std)
-    meann = np.array(color_means).mean(axis=0)
-    #stdd = np.array(color_stds).std(axis=0) 
-    stdd = np.sqrt(np.array(color_stds).mean(axis=0) -meann**2)
+# def get_mean_std_colors(train_dict,annot_visit_map):
+#     count = 0
+#     yaml_data = []
+#     color_means = []
+#     color_stds = []
+#     for train_id in train_dict:
+#         id = train_id.split('/')[-1].replace('.txt','')
+#         color_mean, color_std, length, label = calculate_color_stats_len(train_path+f"{id}.npy")
+#         color_means.append(color_mean)
+#         color_stds.append(color_std)
+#     meann = np.array(color_means).mean(axis=0)
+#     #stdd = np.array(color_stds).std(axis=0) 
+#     stdd = np.sqrt(np.array(color_stds).mean(axis=0) -meann**2)
  
-    yaml_data = [{'color_mean': [float(x) for x in meann], 'color_std': [float(x) for x in stdd]}] 
-    print(yaml_data)
-    with open('/home/student/Mask3D_SIR/color_mean_std.yaml', 'w') as file:
-        yaml.dump(yaml_data, file, default_flow_style=False)
+#     yaml_data = [{'color_mean': [float(x) for x in meann], 'color_std': [float(x) for x in stdd]}] 
+#     print(yaml_data)
+#     with open('/home/student/Mask3D_SIR/color_mean_std.yaml', 'w') as file:
+#         yaml.dump(yaml_data, file, default_flow_style=False)
 
-def get_mean_std_colors_mask3d(path):
-    yaml_data = []
-    color_means = []
-    color_stds = []
-    for root, dirs, files in os.walk(path):
-        print(files)
-        for file in files:
-            color_mean, color_std, length, label = calculate_color_stats_len(path+str(file))
-            color_means.append(color_mean)
-            color_stds.append(color_std)
-        meann = np.array(color_means).mean(axis=0)
-        stdd = np.array(color_stds).std(axis=0) 
-        stdd = np.sqrt(np.array(color_stds).mean(axis=0) -meann**2)
+# def get_mean_std_colors_mask3d(path):
+#     yaml_data = []
+#     color_means = []
+#     color_stds = []
+#     for root, dirs, files in os.walk(path):
+#         print(files)
+#         for file in files:
+#             color_mean, color_std, length, label = calculate_color_stats_len(path+str(file))
+#             color_means.append(color_mean)
+#             color_stds.append(color_std)
+#         meann = np.array(color_means).mean(axis=0)
+#         stdd = np.array(color_stds).std(axis=0) 
+#         stdd = np.sqrt(np.array(color_stds).mean(axis=0) -meann**2)
     
-        yaml_data = [{'color_mean': [float(x) for x in meann], 'color_std': [float(x) for x in stdd]}] 
-        print(yaml_data)
-def get_instance_gt(train_dict, val_dict, annot_visit_map):
-    # for train_id in train_dict:
-    #     id = train_id.split('/')[-1].replace('.txt','')
-    #     data = np.load(train_path+f"{id}.npy")
-    #     labels = data[:, -2]
-    #     instance_id = data[:,-1]
-
-    #     gt = labels * 1000 + instance_id + 1
-    #     np.savetxt(instance_path+'train/'+id+'txt', gt.astype(np.int32), fmt="%d")
+#         yaml_data = [{'color_mean': [float(x) for x in meann], 'color_std': [float(x) for x in stdd]}] 
+#         print(yaml_data)
+def get_instance_gt(train_dict, val_dict, test_dict):
+    train_path = '/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/Mask3D/data/processed/scannet200/train/'
+    val_path = '/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/Mask3D/data/processed/scannet200/validation/'
+    test_path = '/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/Mask3D/data/processed/scannet200/test/'
+    trainSet = set()
+    testSet = set()
+    valSet = set()
+    for train_id in train_dict:
+        id = train_id.split('/')[-1].replace('.txt','')
+        data = np.load(train_path+f"{id}.npy")
+        labels = data[:, -2]
+        instance_id = data[:,-1]
+        for num in np.unique(labels):
+            trainSet.add(num)
+        gt = labels * 1000 + instance_id + 1
+        np.savetxt(instance_path+'train/'+id+'.txt', gt.astype(np.int32), fmt="%d")
     for val_id in val_dict:
         id = val_id.split('/')[-1].replace('.txt','')
         data = np.load(val_path+f"{id}.npy")
         labels = data[:, -2]
         instance_id = data[:,-1]
-
+        for num in np.unique(labels):
+            testSet.add(num)
         gt = labels * 1000 + instance_id + 1
-        np.savetxt(instance_path+'validation/'+id+'txt', gt.astype(np.int32), fmt="%d")
+        np.savetxt(instance_path+'validation/'+id+'.txt', gt.astype(np.int32), fmt="%d")
+    for test_id in test_dict:
+        id = test_id.split('/')[-1].replace('.txt','')
+        data = np.load(test_path+f"{id}.npy")
+        labels = data[:, -2]
+        instance_id = data[:,-1]
+        for num in np.unique(labels):
+            valSet.add(num)
+        gt = labels * 1000 + instance_id + 1
+        np.savetxt(instance_path+'test/'+id+'.txt', gt.astype(np.int32), fmt="%d")
+    print(trainSet,testSet,valSet)
         
-# get_instance_gt(train_dict, val_dict, annot_visit_map)
+get_instance_gt(train_dict, val_dict, test_dict)
 
 #get_mean_std_colors(train_dict, annot_visit_map)
 #mask3d_path = '/home/student/Mask3D/data/222/scannet/train/'
@@ -498,4 +517,4 @@ def get_instance_gt(train_dict, val_dict, annot_visit_map):
 #exit()
 # get_train_database(train_dict, annot_visit_map)
 # get_test_database(test_dict, annot_visit_map)
-get_val_database(test_dict, annot_visit_map)
+#get_val_database(test_dict, annot_visit_map)

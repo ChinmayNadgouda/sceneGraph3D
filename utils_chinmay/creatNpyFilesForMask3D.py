@@ -252,8 +252,8 @@ for root, dirs, files in os.walk(folder_path):
                                 part_metadata[text_files_home+str(directory_name[annotation['label']])+'/'+annotation['annot_id']+'.txt'] = metadata
                                 annot_visit_map[text_files_home+str(directory_name[annotation['label']])+'/'+annotation['annot_id']+'.txt'] = root+'/'+dir+'/'+dir+'_laser_scan.ply'
 
-morethan2 = read_file_to_dict('/home/student/moreThan2ObjectLabel.txt')
-exact2 = read_file_to_dict('/home/student/2classes_scene_annot.txt')
+morethan2 = read_file_to_dict('moreThan2ObjectLabel.txt')
+exact2 = read_file_to_dict('2classes_scene_annot.txt')
 
 
 write_to_txt = ''

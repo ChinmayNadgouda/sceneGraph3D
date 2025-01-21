@@ -3,7 +3,8 @@ import json
 home = '/home/student/dev/'
 folder_path = home
 visit_files = [d for d in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, d))]
-def get_interestPoints_from_parts_indices(visit_files, all_ids):
+
+def create_splits(visit_files, all_ids):
     """Load indices from a JSON file."""
     ann_id_to_visit_id = {}
     count = 0
@@ -80,9 +81,9 @@ def get_train_test_ids(file_path):
     return test_ids, train_val_ids
 
 
-test_ids, train_val_ids = get_train_test_ids('/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/train_test_split/')
+#test_ids, train_val_ids = get_train_test_ids('/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/train_test_split/')
 
-train, val, test = get_interestPoints_from_parts_indices(visit_files, test_ids + train_val_ids)
+train, val, test = create_splits(visit_files, test_ids + train_val_ids)
 print(len(train))
 
 print('########################################')
