@@ -4,4 +4,4 @@ Steps:
 	To get train test val splits run the script: check_train_test_list.py
 2) Run the file creatNpyFilesForMask3D.py, to get .npy files suitable for Mask3D ( Make sure the text files generated from above step are in correct path (text_files_home), (folder_path) represents the path for scenefun3d files)
 3) Run the file mask3d_create_label_database.py, to generate metadata (GT, ymal) for Mask3D
-4) Run the file use_eval.py to test the Mask3D checkpoint on own data.
+4) Run the file use_eval.py to test the Mask3D checkpoint on own data.  (edit the checkpoint_path in eval.py main method)

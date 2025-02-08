@@ -597,6 +597,44 @@ def get_obj_captions_from_image_llava_1_6_mistral(client: (PreTrainedModel, Llav
     print(f"Line 97, vlm_answer: {vlm_answer_captions}")
 
     return vlm_answer_captions
+def get_affordance_label_from_list_for_given_obj(client: (PreTrainedModel, LlavaNextProcessor), object_class: str, affordance_list: list):
+    prompt = """
+    You are an agent specialized in identifying the correct affordance label of objects based on a list of affordance labels provided.
+    Here is an example input, cabinet, ['pinch_pull','rotate','hook_turn','key_press','foot_push']
+    You will be provided with an object class and a list of affordance labels for the object. Your task is to determine the most appropriate label. 
+    Your response should be a only the affordance label in the following format ['pinch_pull']
+
+
+
+    
+    """
+    user_prompt = 'Here is the object class,' + object_class + 'The affordance list are' +  affordance_list + 'Give me the most probable affordance label in rquested format.'
+    conversation = [
+        {
+
+        "role": "user",
+        "content": [
+            {"type": "text", "text": prompt + user_prompt}
+        ]
+        },
+    ]
+
+    try:
+        model = client[0]
+        processor = client[1]
+        prompt = processor.apply_chat_template(conversation, add_generation_prompt=True)
+
+        inputs = processor(text=prompt, return_tensors="pt")
+
+        # autoregressively complete prompt
+        output = model.generate(**inputs, max_new_tokens=4000, do_sample=False)
+        vlm_answer_str = processor.decode(output[0][2:], skip_special_tokens=True)
+        print(f"Line 113, vlm_answer_str: {vlm_answer_str}")
+        text_to_extract = extract_model_output(vlm_answer_str,prompt + user_prompt)
+        print(text_to_extract)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        print(f"Setting vlm_answer to an empty list.")
 
 def stitch_images(image_path1, image_path2, final_path):
     image1 = cv2.imread(image_path2)

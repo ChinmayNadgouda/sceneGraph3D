@@ -335,6 +335,11 @@ def main(args):
         min_value = similarities.min()
         normalized_similarities = (similarities - min_value) / (max_value - min_value)
         probs = F.softmax(similarities, dim=0)
+        top2_values, top2_indices = torch.topk(probs, k=2)
+
+        max_prob_idx = top2_indices[0]  # Index of the max value
+        second_max_prob_idx = top2_indices[1]  # Index of the second max value
+        print('Second object but same probability', objects[second_max_prob_idx]['class_name'], objects[max_prob_idx]['class_name'], top2_values)
         max_prob_idx = torch.argmax(probs)
         similarity_colors = cmap(normalized_similarities.detach().cpu().numpy())[..., :3]
 
@@ -342,14 +347,27 @@ def main(args):
         
         # Estimate normals
         # Sending most probable object to mask3d
-        pcd_to_eval = max_prob_object['pcd']
-        pcd_to_eval.estimate_normals(
-            search_param=o3d.geometry.KDTreeSearchParamHybrid(
-                radius=0.1,  # Search radius
-                max_nn=30    # Maximum nearest neighbors
-            )
-        )
-        mask3d_main(cfg, np.asarray(pcd_to_eval.points), np.asarray(pcd_to_eval.colors),  np.asarray(pcd_to_eval.normals))
+        # pcd_to_eval = max_prob_object['pcd']
+        # new_temp_points = np.array(max_prob_object['pcd'].points)
+        # pcd_to_eval.estimate_normals(
+        #     search_param=o3d.geometry.KDTreeSearchParamHybrid(
+        #         radius=0.1,  # Search radius
+        #         max_nn=30    # Maximum nearest neighbors
+        #     )
+        # )
+        # masks = mask3d_main(cfg, np.asarray(pcd_to_eval.points), np.asarray(pcd_to_eval.colors),  np.asarray(pcd_to_eval.normals), 12)
+        # for key, value in masks.items():
+        #     if key == 9:
+        #         mask = value['masks'][0].astype(bool)
+        #         inverse_mask = ~ value['masks'][0].astype(bool)
+                # new_pcd = o3d.geometry.PointCloud()
+                # masked_points = new_temp_points[mask]
+                # new_pcd.points = o3d.utility.Vector3dVector(masked_points)
+                # new_colors = np.tile([1,1,1], [len(new_pcd.points), 1])
+                # new_pcd.colors = o3d.utility.Vector3dVector(new_colors)
+        #mask3d end
+
+
         # count_img = 0
         # dataset = get_dataset(
         #         dataconfig='/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/dataset/dataconfigs/replica/replica.yaml',
@@ -522,9 +540,26 @@ def main(args):
                     (len(pcd.points), 1)
                 )
             )
-
+        #mask3d    
+        #     if(i == max_prob_idx):
+        #         new_pcd = o3d.geometry.PointCloud()
+        #         print(pcd)
+        #         print(inverse_mask.shape)
+        #         print(mask.shape)
+        #         ponts2 = np.array(pcd.points)[mask]
+        #         new_pcd.points = o3d.utility.Vector3dVector(ponts2)
+        #         colrs2 = np.tile([0,0,0], [ponts2.shape[0],1])
+        #         new_pcd.colors = o3d.utility.Vector3dVector(colrs2)
+        #         ponts = np.array(pcd.points)[inverse_mask]
+        #         pcd.points = o3d.utility.Vector3dVector(ponts)
+        #         colrs = np.array(pcd.colors)[inverse_mask]
+        #         pcd.colors = o3d.utility.Vector3dVector(colrs)
+                
+        # pcds.append(new_pcd)
+        # print(pcds)
+        #mask3d end
         for pcd in pcds:
-            vis.update_geometry(pcd)
+            vis.add_geometry(pcd)
             
     def save_view_params(vis):
         param = vis.get_view_control().convert_to_pinhole_camera_parameters()

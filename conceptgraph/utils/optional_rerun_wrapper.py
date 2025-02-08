@@ -159,7 +159,10 @@ def orr_log_objs_pcd_and_bbox(objects, obj_classes):
         else:
             colors = None
             
-        curr_obj_color = obj_classes.get_class_color(obj['class_name'])
+        if( obj['class_name'] not in obj_classes.get_classes_arr()):
+            curr_obj_color = [0,0,0]
+        else:    
+            curr_obj_color = obj_classes.get_class_color(obj['class_name'])
         curr_obj_inst_color = obj['inst_color']
 
         # Log point cloud data

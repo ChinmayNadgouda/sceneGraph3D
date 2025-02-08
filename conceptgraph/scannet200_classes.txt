@@ -198,3 +198,13 @@ water pitcher
 whiteboard
 window
 windowsill
+hook_turn
+exclude
+hook_pull
+key_press
+rotate
+foot_push
+unplug
+plug_in
+pinch_pull
+tip_push

@@ -1038,7 +1038,6 @@ class SceneFun3D(GradSLAMDataset):
             folders = path.split('/')
             time_stamp = folders[-1].split('_')[-1].replace('.jpg','')
             pose = dataParser.get_nearest_pose(time_stamp,traj)
-            print(pose)
             poses.append(torch.from_numpy(np.array(pose)).float())
 
         return poses
@@ -1080,7 +1079,7 @@ class SIRDataset(GradSLAMDataset):
         )
 
     def get_filepaths(self):
-        color_paths = natsorted(glob.glob(f"{self.input_folder}/color/*.jpg"))
+        color_paths = natsorted(glob.glob(f"{self.input_folder}/color/*.png"))
         depth_paths = natsorted(glob.glob(f"{self.input_folder}/depth/*.png"))
 
         embedding_paths = None
@@ -1089,6 +1088,7 @@ class SIRDataset(GradSLAMDataset):
                 glob.glob(f"{self.input_folder}/{self.embedding_dir}/*.pt")
             )
         return color_paths, depth_paths, embedding_paths
+    """
     def load_poses(self):
         poses = []
         with open(self.pose_path, "r") as f:
@@ -1128,7 +1128,7 @@ class SIRDataset(GradSLAMDataset):
         self.num_imgs = len(color_paths_new)
             
         return poses
-    """
+    
     """
     def load_poses(self):
         poses = []

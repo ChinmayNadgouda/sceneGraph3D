@@ -1,7 +1,7 @@
 defaults:
   - base_paths
 
-dataset_root: /home/student/ConceptGraph/datasets/SIRDataset/sept/
+dataset_root: /home/gokul/ConceptGraphs/datasets/SIRDataset/sept/
 scene_id: 24
 dataset_config: ${repo_root}/conceptgraph/dataset/dataconfigs/SIRDataset/sirdataset.yaml
 render_camera_path: ${repo_root}/conceptgraph/dataset/dataconfigs/record3d/record_3d_camera.json

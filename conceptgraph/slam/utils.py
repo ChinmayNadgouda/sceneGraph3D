@@ -1333,10 +1333,10 @@ def prepare_objects_save_vis(objects: MapObjectList, downsample_size: float=0.02
 
 
 def process_cfg(cfg: DictConfig):
-    cfg.dataset_root = Path(cfg.dataset_root)
-    cfg.dataset_config = Path(cfg.dataset_config)
-    
-    if cfg.dataset_config.name != "multiscan.yaml":
+    cfg.dataset_root = str(Path(cfg.dataset_root))
+    cfg.dataset_config = str(Path(cfg.dataset_config))
+    dataset_cfg = Path(cfg.dataset_config)
+    if dataset_cfg != "multiscan.yaml":
         # For datasets whose depth and RGB have the same resolution
         # Set the desired image heights and width from the dataset config
         dataset_cfg = omegaconf.OmegaConf.load(cfg.dataset_config)

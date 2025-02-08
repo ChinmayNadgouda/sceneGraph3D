@@ -1,32 +1,17 @@
-defaults:
-  - base
-  - base_paths
-  - base_mapping
-  #- sirdataset
-  #- replica
-  #- record3d
-  - sceneFun3d
-  - sam
-  - classes
-  - logging_level
-  - rerun_realtime_mapping_cfg
-
-
-
 detections_exp_suffix: s_detections_stride2 # helpful label to identify your detections
 force_detection: true
 save_detections: true
 
 make_edges: false
 
-stride: 2
+stride: 10
 exp_suffix: r_mapping_stride20 # helpful label to identify your mapping experiment
 
 save_video: false
 save_objects_all_frames: false
 
 downsample_voxel_size: 0.005
-obj_pcd_max_points: 50000
+obj_pcd_max_points: 10000
 
 debug_render: false
 vis_render: false

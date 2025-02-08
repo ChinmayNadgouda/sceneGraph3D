@@ -81,7 +81,7 @@ def get_train_test_ids(file_path):
     return test_ids, train_val_ids
 
 
-#test_ids, train_val_ids = get_train_test_ids('/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/train_test_split/')
+test_ids, train_val_ids = get_train_test_ids('/home/student/move/Pointnet_Pointnet2_pytorch/data/shapenetcore_partanno_segmentation_benchmark_v0_normal/train_test_split/')
 
 train, val, test = create_splits(visit_files, test_ids + train_val_ids)
 print(len(train))

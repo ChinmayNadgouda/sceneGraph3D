@@ -9,7 +9,7 @@ import uuid
 from pathlib import Path
 import pickle
 import gzip
-
+from transformers import AutoModelForCausalLM, AutoTokenizer  
 # Third-party imports
 from transformers import AutoProcessor, LlavaForConditionalGeneration, LlavaNextProcessor, LlavaNextForConditionalGeneration, BitsAndBytesConfig
 import cv2
@@ -19,13 +19,22 @@ import torch
 from PIL import Image
 from tqdm import trange
 from open3d.io import read_pinhole_camera_parameters
+import open3d as o3d
 import hydra
 from omegaconf import DictConfig
 import open_clip
 from ultralytics import YOLO, SAM
 import supervision as sv
 from collections import Counter
-
+from conceptgraph.Mask3D.eval import main as mask3d_main
+from hydra.core.global_hydra import GlobalHydra
+import time
+from hydra.experimental import initialize, compose
+initialize(config_path="../Mask3D/conf", job_name="test_app")  # Initialize Hydra
+cfg_mask3d = compose(config_name="config_base_instance_segmentation.yaml")  # Load the Hydra configuration
+# Clear the existing instance
+if GlobalHydra.instance().is_initialized():
+    GlobalHydra.instance().clear()
 # Local application/library specific imports
 from conceptgraph.utils.optional_rerun_wrapper import (
     OptionalReRun, 
@@ -41,7 +50,7 @@ from conceptgraph.utils.optional_wandb_wrapper import OptionalWandB
 from conceptgraph.utils.geometry import rotation_matrix_to_quaternion
 from conceptgraph.utils.logging_metrics import DenoisingTracker, MappingTracker
 from conceptgraph.utils.vlm import consolidate_captions, get_obj_rel_from_image_gpt4v, get_openai_client, \
-    consolidate_captions_llava, consolidate_captions_llava_1_6_mistral
+    consolidate_captions_llava, consolidate_captions_llava_1_6_mistral, get_affordance_label_from_list_for_given_obj
 from conceptgraph.utils.ious import mask_subtract_contained
 from conceptgraph.utils.general_utils import (
     ObjectClasses, 
@@ -100,11 +109,95 @@ from conceptgraph.utils.model_utils import compute_clip_features_batched
 from conceptgraph.utils.general_utils import get_vis_out_path, cfg_to_dict, check_run_detections
 
 
+import os
+from mistralai import Mistral
 # Disable torch gradient computation
 torch.set_grad_enabled(False)
+def get_part_name(object_class:str, affordance_list:str):
+    model = "mistral-large-latest"
 
+    client = Mistral(api_key='4hhDbtrs8XGj6XvsYP4YAm3qSl0zH2CO')
+    prompt = """You are an agent specialized in identifying the correct affordance label of objects based on a list of affordance labels provided.
+        Here is an example input, cabinet, ['pinch_pull','rotate','hook_turn','key_press','foot_push']
+        You will be provided with an object class and a list of affordance labels for the object. Your task is to determine the most appropriate label. 
+        Your response should be a only the affordance label in the following format ['pinch_pull']
+
+    """
+    user_prompt = 'Here is the object class,' + object_class + 'The affordance list are' +  str(affordance_list) + 'Give me the most probable affordance label in rquested format.'
+
+    chat_response = client.chat.complete(
+        model= model,
+        messages = [
+            {
+                "role": "user",
+                "content": prompt + user_prompt,
+            },
+        ]
+    )
+    time.sleep(2)
+    prompt = """You are an agent specialized in identifying the correct name of an object part based on  the affordance label of the part and object class provided.
+    Here is an example input, hook_turn and  door
+    You will be provided with an object class and a affordance label for the part. Your task is to determine the most appropriate part name. 
+    Your response should be a only the part name in the following format ['handle']
+
+    """
+    user_prompt = 'Here is the object class,' + object_class + 'The affordance label is' + str(chat_response.choices[0].message.content) + 'Give me the most probable part name in rquested format.'
+
+    chat_response2 = client.chat.complete(
+        model= model,
+        messages = [
+            {
+                "role": "user",
+                "content": prompt + user_prompt,
+            },
+        ]
+    )
+    time.sleep(2)
+
+    return eval(chat_response2.choices[0].message.content)[0], eval(chat_response.choices[0].message.content)[0]
+
+def get_part_tasks(object_class, part_name, clip_model, clip_tokenizer):
+    model = "mistral-large-latest"
+
+    client = Mistral(api_key='4hhDbtrs8XGj6XvsYP4YAm3qSl0zH2CO')
+    prompt = """You are an agent specialized in decribing at least five uses for a given part name and its object.
+    Here is an example input, handle and  cabinet
+    You will be provided with an object class and a name for the part. Your task is to describe the five most appropriate tasks that can be done using the part. 
+    Your response should be a only the tasks in the following format ['task1', 'task2', .... ]
+    """
+    user_prompt = 'Here is the object class,' + object_class + 'The name for the part is ' +  part_name + 'Give me the tasks in requested format.'
+
+    chat_response = client.chat.complete(
+        model= model,
+        messages = [
+            {
+                "role": "user",
+                "content": prompt + user_prompt,
+            },
+        ]
+    )
+    time.sleep(2)
+
+    tasks = eval(chat_response.choices[0].message.content)
+    tokens = clip_tokenizer(tasks)
+    tokens = tokens.to('cuda:0')
+
+    # Get the text embeddings from CLIP model
+    with torch.no_grad():
+        text_features = clip_model.encode_text(tokens)
+
+    # Now, `text_features` contains the embeddings for each task.
+    # Combine them into a single embedding by averaging the embeddings.
+    combined_embedding = text_features.mean(dim=0)
+
+    # Print the final combined embedding
+    print(combined_embedding.shape)  # Should be a vector of shape (512,)
+    print(combined_embedding) 
+    return combined_embedding
+
+    
 # A logger for this file
-@hydra.main(version_base=None, config_path="../hydra_configs/", config_name="rerun_realtime_mapping")
+@hydra.main(config_path="../hydra_configs/", config_name="rerun_realtime_mapping")
 # @profile
 def main(cfg : DictConfig):
     tracker = MappingTracker()
@@ -112,9 +205,9 @@ def main(cfg : DictConfig):
     orr = OptionalReRun()
     orr.set_use_rerun(cfg.use_rerun)
     orr.init("realtime_mapping")
-    orr.connect('141.58.226.203:9876')
+    #orr.connect('141.58.226.203:9876')
 
-    #orr.spawn()
+    orr.spawn()
 
 
     owandb = OptionalWandB()
@@ -140,7 +233,6 @@ def main(cfg : DictConfig):
         dtype=torch.float,
     )
     # cam_K = dataset.get_cam_K()
-
     objects = MapObjectList(device=cfg.device)
     map_edges = MapEdgeMapping(objects)
 
@@ -184,7 +276,7 @@ def main(cfg : DictConfig):
         sam_predictor = SAM('mobile_sam.pt') # UltraLytics SAM
         # sam_predictor = measure_time(get_sam_predictor)(cfg) # Normal SAM
         clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
-            "ViT-B-16", "laion400m_e31"
+            "ViT-B-32", "laion400m_e31"
         )
         # clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
         #     "ViT-H-14", "laion2b_s32b_b79k"
@@ -197,21 +289,23 @@ def main(cfg : DictConfig):
         detection_model.set_classes(obj_classes.get_classes_arr())
 
         # openai_client = get_openai_client()
-        model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
-        model_id = "llava-hf/llava-1.5-7b-hf"
-        model_id = "llava-hf/llava-v1.6-mistral-7b-hf"
-        model_id = "llava-hf/llava-v1.6-vicuna-13b-hf"
-        processor = LlavaNextProcessor.from_pretrained(model_id)
-        bnb_config = BitsAndBytesConfig(
-                    load_in_4bit=True,
-                    bnb_4bit_use_double_quant=True,
-                    bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.bfloat16
-                    )
-        model = LlavaNextForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16, low_cpu_mem_usage=True, quantization_config=bnb_config,
-                    use_flash_attention_2=True ) 
-        #processor = None
-        #model = None
+        # model_id = "/home/gokul/ConceptGraphs/llava-v1.5-7b/models--llava-hf--llava-1.5-7b-hf/snapshots/fa3dd2809b8de6327002947c3382260de45015d4"
+        # model_id = "llava-hf/llava-1.5-7b-hf"
+        #model_id = "llava-hf/llava-v1.6-mistral-7b-hf"
+        #model_id = "llava-hf/llava-v1.6-vicuna-13b-hf"
+        # model_id = "/media/gokul/Elements1/models--llava-hf--llava-v1.6-vicuna-7b-hf/snapshots/c916e6cdcd760b4cecd1dd4907f84ac649f93b23"
+        # cache_dir = "/media/gokul/Elements1/huggingface_cache" 
+        # processor = LlavaNextProcessor.from_pretrained(model_id, cache_dir=cache_dir)
+        # bnb_config = BitsAndBytesConfig(
+        #             load_in_4bit=True,
+        #             bnb_4bit_use_double_quant=True,
+        #             bnb_4bit_quant_type="nf4",
+        #             bnb_4bit_compute_dtype=torch.bfloat16
+        #             )
+        # model = LlavaNextForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16, low_cpu_mem_usage=True, quantization_config=bnb_config,
+        #             use_flash_attention_2=True, cache_dir=cache_dir ) 
+        processor = None
+        model = None
         
     else:
         print("\n".join(["NOT Running detections..."] * 10))
@@ -546,6 +640,96 @@ def main(cfg : DictConfig):
                 do_edges=cfg["make_edges"],
                 map_edges=map_edges
             )
+        
+
+
+
+
+        #Integrating Mask3D
+        if is_final_frame:
+            part_list = {
+                0:'exclude2',
+                1:'hook_turn',
+                2:'exclude',
+                3:'hook_pull',
+                4:'key_press',
+                5:'rotate',
+                6:'foot_push',
+                7:'unplug',
+                8:'plug_in',
+                9:'pinch_pull',
+                10:'tip_push'
+            }
+            part_obj_classes = ObjectClasses(
+                classes_file_path='/home/gokul/ConceptGraphs/concept-graphs/conceptgraph/part-object-classes.txt', 
+                bg_classes=['wall','floor','ceiling'], 
+                skip_bg=False
+            )
+            valid_objects = part_obj_classes.get_classes_arr()
+            count = 0
+            max_obj_count = 0
+            for obj in objects:
+                if max_obj_count > obj['new_counter']:
+                    pass
+                else:
+                    max_obj_count = obj['new_counter']
+            
+            new_obj_count = 1
+            for obj in objects:
+                if obj and len(obj['pcd'].points) > 500 and obj['class_name'] in valid_objects:
+                  count += 1
+                  temp_obj = o3d.geometry.PointCloud()
+                  temp_obj.points = obj['pcd'].points
+                  temp_obj.colors = obj['pcd'].colors
+                  temp_obj.estimate_normals(
+                     search_param=o3d.geometry.KDTreeSearchParamKNN(knn=30)  # KNN search
+                  )
+                  masks_scores = mask3d_main(cfg_mask3d, np.asarray(temp_obj.points), np.asarray(temp_obj.colors),  np.asarray(temp_obj.normals), obj['class_name'])
+                  obj_points = np.asarray(obj['pcd'].points)
+                  obj_colors = np.asarray(obj['pcd'].colors)
+                  affordance_labels = []
+                  for key in masks_scores.keys():
+                      affordance_labels.append(part_list[key])
+                  part_name, part_label = get_part_name(obj['class_name'], affordance_labels)
+                  for key, value in masks_scores.items():
+                        if part_list[key] == part_label:
+                            masks = np.array(value['masks'])
+
+                            # Aggregation using logical OR (binary mask)
+                            mask = np.any(masks, axis=0).astype(bool)
+                            #mask = value['masks'][0].astype(bool)
+                            inverse_mask = ~ value['masks'][0].astype(bool)
+                            new_points = obj_points[mask]
+                            if not len(new_points) > 4:
+                                continue
+                            new_colors = obj_colors[mask]
+                            obj['pcd'].points = o3d.utility.Vector3dVector(obj_points[inverse_mask])
+                            obj['pcd'].colors = o3d.utility.Vector3dVector(obj_colors[inverse_mask]) 
+                            new_obj = copy.deepcopy(obj)
+                            new_obj['pcd'].points = o3d.utility.Vector3dVector(new_points)
+                            new_obj['pcd'].colors = o3d.utility.Vector3dVector(new_colors)
+                            new_obj['new_counter'] = max_obj_count + new_obj_count
+                            new_obj['class_name'] = part_name
+                            new_obj['class_id'] = 200 + int(key)
+                            new_obj['num_detections'] = 1
+                            new_obj['n_points'] = len(new_points)
+                            new_obj['num_obj_in_class'] = 1
+                            new_obj['curr_obj_num'] = max_obj_count + new_obj_count
+                            new_obj['bbox'] = new_obj['pcd'].get_oriented_bounding_box(robust=True)
+                            print(new_obj)
+                            print(get_part_tasks(obj['class_name'], part_name, clip_model, clip_tokenizer))
+                            new_obj_count += 1
+                            objects.append(new_obj)
+                            # model_name_llm = "mistralai/Mistral-7B-v0.1"  # Ensure you have enough VRAM  
+                            # tokenizer = AutoTokenizer.from_pretrained(model_name_llm)  
+                            # model = AutoModelForCausalLM.from_pretrained(model_name_llm, torch_dtype=torch.float16, device_map="auto")  
+                            # question =  'For the object' + obj['class_name'] + ', what would be the name of its part/ functionally interactive element if its label is '+new_obj['class_name']
+                            
+                            # inputs = tokenizer(question, return_tensors="pt").to("cuda")  
+                            # output = model.generate(**inputs, max_new_tokens=100)  
+                            # print('LLM answer:',tokenizer.decode(output[0], skip_special_tokens=True))
+                        
+
         orr_log_objs_pcd_and_bbox(objects, obj_classes)
         orr_log_edges(objects, map_edges, obj_classes)
 

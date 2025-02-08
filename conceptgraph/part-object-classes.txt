@@ -1,0 +1,60 @@
+cabinet
+door
+trash_can
+table
+window
+shelf
+pillow
+box
+doorframe
+desk
+sofa
+sink
+dresser
+sofachair
+sofa bed
+radiator
+counter top
+coffee table
+toilet
+fridge 
+telephone
+bathtub
+microwave
+printer
+shower 
+soap box
+stove top
+stand
+wardrobe 
+blanket
+copier
+soap dish
+coffee maker
+container
+basket
+bucket
+window
+speaker
+washing machine
+piano
+toaster
+clothes dryer
+vaccum cleaner
+water cooler
+kettle
+oven
+hair dryer
+machine
+music stand
+fireplace
+furniture
+crate
+projector
+thermostat
+faucet
+heater
+pool table 
+sewing machine 
+toolbox 
+podium
