@@ -4,7 +4,7 @@ from mistralai import Mistral
 
 model = "mistral-large-latest"
 
-client = Mistral(api_key='4hhDbtrs8XGj6XvsYP4YAm3qSl0zH2CO')
+client = Mistral(api_key='')
 prompt = """You are an agent specialized in identifying the correct class label of an object part based on  the affordance label of the part and object class provided.
     Here is an example input, pinch_pull and  cabinet
     You will be provided with an object class and a affordance label for the part. Your task is to determine the most appropriate part name. 
@@ -37,7 +37,7 @@ exit()
 import requests
 
 API_URL = "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1"
-headers = {"Authorization": "Bearer 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"}
+headers = {"Authorization": "Bearer "}
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
@@ -179,7 +179,7 @@ bnb_config = BitsAndBytesConfig(
     llm_int8_enable_fp32_cpu_offload=True
 )
 model_name = "TheBloke/Mistral-7B-Instruct-v0.1-GPTQ"  
-tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, token='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')  
+tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, token='')  
 model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, device_map="auto", quantization_config=bnb_config, cache_dir=cache_dir) 
 question =  'For the object cabinet, what would be the name of its part/ functionally interactive element if its label is hook_pull'
 
